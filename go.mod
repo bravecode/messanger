@@ -9,6 +9,7 @@ require (
 	github.com/go-playground/validator v9.31.0+incompatible // indirect
 	github.com/gofiber/fiber v1.14.6 // indirect
 	github.com/gofiber/fiber/v2 v2.13.0 // indirect
+	github.com/joho/godotenv v1.3.0 // indirect
 	github.com/klauspost/compress v1.13.1 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.7 // indirect

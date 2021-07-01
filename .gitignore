@@ -1,0 +1,5 @@
+# Database
+./database.db
+
+# Env Files
+.env

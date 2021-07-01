@@ -22,6 +22,6 @@ type AccessResponse struct {
 }
 
 type AuthResponse struct {
-	User *UserResponse `json:"user"`
-	Auth *AuthResponse `json:"auth"`
+	User *UserResponse   `json:"user"`
+	Auth *AccessResponse `json:"auth"`
 }

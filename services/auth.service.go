@@ -4,6 +4,7 @@ import (
 	"errors"
 	"messanger/models"
 	"messanger/types"
+	"messanger/utils/auth"
 
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
@@ -36,8 +37,12 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(404).SendString("Invalid email or password")
 	}
 
-	// Generate Token
-	return c.SendString("Success")
+	return c.JSON(&types.AuthResponse{
+		User: u,
+		Auth: &types.AccessResponse{
+			Token: auth.EncodeToken(u.ID),
+		},
+	})
 }
 
 // User should have unique email
