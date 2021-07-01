@@ -10,11 +10,12 @@ import (
 
 func main() {
 	database.Connect()
-	database.Migrate(&models.Room{})
+	database.Migrate(&models.Room{}, &models.User{})
 
 	app := fiber.New()
 
 	routes.AuthRoutes(app)
+	routes.RoomRoutes(app)
 
 	app.Listen(":8000")
 }
