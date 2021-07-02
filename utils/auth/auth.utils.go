@@ -1,13 +1,23 @@
 package auth
 
 import (
+	"errors"
 	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
-func EncodeToken(ID uint) string {
+type TokenPayload struct {
+	ID uint
+}
+
+type TokenClaims struct {
+	TokenPayload
+	jwt.StandardClaims
+}
+
+func EncodeToken(payload *TokenPayload) string {
 	duration, err := time.ParseDuration(os.Getenv("TOKEN_DURATION"))
 
 	if err != nil {
@@ -16,7 +26,7 @@ func EncodeToken(ID uint) string {
 
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"exp": time.Now().Add(duration).Unix(),
-		"ID":  ID,
+		"ID":  payload.ID,
 	})
 
 	token, err := t.SignedString([]byte(os.Getenv("TOKEN_SECRET")))
@@ -28,10 +38,28 @@ func EncodeToken(ID uint) string {
 	return token
 }
 
-func DecodeToken() string {
-	return "Token decoded"
-}
+func ValidateToken(token string) (*TokenClaims, error) {
+	parsed, err := jwt.ParseWithClaims(
+		token,
+		&TokenClaims{},
+		func(t *jwt.Token) (interface{}, error) {
+			return []byte(os.Getenv("TOKEN_SECRET")), nil
+		},
+	)
 
-func VerifyToken() string {
-	return "Token verified"
+	if err != nil {
+		return nil, err
+	}
+
+	claims, ok := parsed.Claims.(*TokenClaims)
+
+	if !ok {
+		return nil, err
+	}
+
+	if claims.ExpiresAt < time.Now().Local().Unix() {
+		return nil, errors.New("token expires")
+	}
+
+	return claims, nil
 }

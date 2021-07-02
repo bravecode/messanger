@@ -40,7 +40,9 @@ func Login(c *fiber.Ctx) error {
 	return c.JSON(&types.AuthResponse{
 		User: u,
 		Auth: &types.AccessResponse{
-			Token: auth.EncodeToken(u.ID),
+			Token: auth.EncodeToken(&auth.TokenPayload{
+				ID: u.ID,
+			}),
 		},
 	})
 }
@@ -73,6 +75,29 @@ func Register(c *fiber.Ctx) error {
 
 	if err := models.CreateUser(u); err.Error != nil {
 		return c.Status(400).SendString(err.Error.Error())
+	}
+
+	return c.JSON(&types.AuthResponse{
+		User: &types.UserResponse{
+			ID:       u.ID,
+			Username: u.Username,
+			Email:    u.Email,
+		},
+		Auth: &types.AccessResponse{
+			Token: auth.EncodeToken(&auth.TokenPayload{
+				ID: u.ID,
+			}),
+		},
+	})
+}
+
+func Profile(c *fiber.Ctx) error {
+	u := &types.UserResponse{}
+
+	err := models.FindUser(u, "id = ?", c.Locals("USER_ID").(uint)).Error
+
+	if err != nil {
+		return c.Status(400).SendString(err.Error())
 	}
 
 	return c.JSON(u)
