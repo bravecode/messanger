@@ -18,7 +18,7 @@ func main() {
 	}
 
 	database.Connect()
-	database.Migrate(&models.Room{}, &models.User{})
+	database.Migrate(&models.User{})
 
 	app := fiber.New()
 

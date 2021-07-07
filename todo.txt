@@ -1,0 +1,4 @@
+Integrate REDIS
+Instead of rooms, create Relationship management
+Integrate Websockets
+Move PORT, DATABASE variables to .env

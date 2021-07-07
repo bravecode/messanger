@@ -3,3 +3,6 @@
 
 # Env Files
 .env
+
+# Other
+./todo.txt
