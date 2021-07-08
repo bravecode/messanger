@@ -1,7 +1,7 @@
 import React from 'react';
 import { BellIcon } from '@heroicons/react/outline';
 
-import { UserAvatar } from '../../../../_components/user/UserAvatar';
+import { UserAvatar } from '@components/user/UserAvatar';
 
 const SideProfile: React.FC = () => (
     <div className="h-20 flex items-center justify-between">

@@ -5,7 +5,7 @@ import { Tabs } from './components/Tabs';
 import { Message } from './components/Message';
 
 const Welcome: React.FC = () => (
-    <div className="mx-auto grid grid-cols-3">
+    <div className="grid grid-cols-3">
 
         <div className="p-5">
             <UserProfile />
