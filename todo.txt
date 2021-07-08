@@ -1,0 +1,14 @@
+# SERVER
+
+Integrate REDIS
+Instead of rooms, create Relationship management
+Integrate Websockets
+Move PORT, DATABASE variables to .env
+
+# CLIENT
+
+Mock Design - Messages (Main Content)
+Mock Design - Side Menu
+Mock Design - Side Icons
+Mock Design - Modals (?)
+Mock Design - Auth Screens
