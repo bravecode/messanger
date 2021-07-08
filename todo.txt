@@ -10,7 +10,5 @@ Move PORT, DATABASE variables to .env
 Mock Design - Side Notifications
 Mock Design - Side Icons
 Mock Design - Modals (?)
-Mock Design - Auth Screens
 Mock Design - Emoji Panel
 Rock, Paper, Scissors Panel
-More Customizable Components

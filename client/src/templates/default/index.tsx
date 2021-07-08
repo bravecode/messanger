@@ -1,10 +1,10 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import logoPath from '../../_assets/svg/logo.svg';
+import logoPath from '_assets/svg/logo.svg';
 
 // Views
-import Welcome from '../../views/welcome';
-import Messanger from '../../views/messanger';
+import Welcome from 'views/welcome';
+import Messanger from 'views/messanger';
 
 const TemplateDefault: React.FC = () => (
     <div className="font-Poppins h-screen w-screen bg-gray-200">
@@ -20,10 +20,10 @@ const TemplateDefault: React.FC = () => (
 
         <main className="container mx-auto bg-white rounded-lg">
 
-        <Switch>
-            <Route exact path="/welcome" component={Welcome} />
-            <Route exact path="/" component={Messanger} />
-        </Switch>
+            <Switch>
+                <Route exact path="/welcome" component={Welcome} />
+                <Route exact path="/" component={Messanger} />
+            </Switch>
 
         </main>
 
