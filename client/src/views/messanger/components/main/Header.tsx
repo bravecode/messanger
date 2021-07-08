@@ -1,7 +1,7 @@
 import React from 'react';
 import { CogIcon } from '@heroicons/react/outline';
 
-import { UserAvatar } from '@components/user/UserAvatar';
+import { UserAvatar } from '_components/user/UserAvatar';
 
 const Header: React.FC = () => (
     <header className="h-20 flex items-center justify-between">

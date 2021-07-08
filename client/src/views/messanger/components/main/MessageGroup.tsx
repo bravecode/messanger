@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { UserAvatar } from '@components/user/UserAvatar';
+import { UserAvatar } from '_components/user/UserAvatar';
 import { Message } from './Message';
 
 export interface IMessageGroupProps {
