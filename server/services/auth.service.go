@@ -47,18 +47,26 @@ func Login(c *fiber.Ctx) error {
 	})
 }
 
-// User should have unique email
+// Register
+// @Summary Create new account
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param data body types.RegisterDTO true "Register Data"
+// @Success 200 {object} types.AuthResponse
+// @Failure 400 {object} string
+// @Router /auth/register [post]
 func Register(c *fiber.Ctx) error {
 	v := validator.New()
 	b := new(types.RegisterDTO)
 
 	if err := c.BodyParser(b); err != nil {
-		return err
+		return c.Status(400).SendString(err.Error())
 	}
 
 	// TODO: This returns ugly error message, refactor it later on
 	if err := v.Struct(b); err != nil {
-		return err
+		return c.Status(400).SendString(err.Error())
 	}
 
 	err := models.FindUserByEmail(&struct{ ID string }{}, b.Email).Error

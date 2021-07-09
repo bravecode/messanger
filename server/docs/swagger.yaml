@@ -1,0 +1,69 @@
+basePath: /
+definitions:
+  types.AccessResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  types.AuthResponse:
+    properties:
+      auth:
+        $ref: '#/definitions/types.AccessResponse'
+      user:
+        $ref: '#/definitions/types.UserResponse'
+    type: object
+  types.RegisterDTO:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+  types.UserResponse:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      username:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: Learning GO (with Fiber) by creating messanger copy.
+  title: Messanger API
+  version: "1.0"
+paths:
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Register Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.RegisterDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.AuthResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Create new account
+      tags:
+      - Auth
+swagger: "2.0"

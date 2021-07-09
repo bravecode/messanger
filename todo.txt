@@ -12,3 +12,5 @@ Mock Design - Side Icons
 Mock Design - Modals (?)
 Mock Design - Emoji Panel
 Rock, Paper, Scissors Panel
+Implement Redux & Redux Saga
+Auth Service

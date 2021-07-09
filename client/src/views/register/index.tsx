@@ -3,9 +3,42 @@ import { Link } from 'react-router-dom';
 
 import { Label } from '_components/form/Label';
 import { Input } from '_components/form/Input';
+import { register } from '_services/auth.service';
+import { useForm } from '_helpers/useForm';
 
+export interface IRegisterData {
+    username: string;
+    email: string;
+    password: string;
+}
+
+export const registerDataDefaults: IRegisterData  = {
+    username: '',
+    email: '',
+    password: '',
+}
 
 const Register: React.FC = () => {
+    const { data, onInputChange } = useForm<IRegisterData>({
+        initialData: registerDataDefaults
+    });
+
+    // Handlers
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        register(data.username, data.email, data.password)
+            .then((res) => {
+                console.log(res);
+            })
+            .catch((err) => {
+                console.log('Error');
+                console.log(err);
+            })
+
+        return;
+    }
+
     return (
         <div className="grid justify-center">
             
@@ -18,27 +51,27 @@ const Register: React.FC = () => {
                 </p>
             </header>
 
-            <form>
+            <form onSubmit={handleSubmit}>
                 <div className="mb-2.5">
                     <Label htmlFor="username">
                         Username
                     </Label>
-                    <Input type="text" name="username" />
+                    <Input type="text" name="username" onChange={onInputChange} />
                 </div>
                 <div className="mb-2.5">
                     <Label htmlFor="email">
                         Email
                     </Label>
-                    <Input type="email" name="email" />
+                    <Input type="email" name="email" onChange={onInputChange} />
                 </div>
                 <div className="mb-2.5">
                     <Label htmlFor="password">
                         Password
                     </Label>
-                    <Input type="password" name="password" />
+                    <Input type="password" name="password" onChange={onInputChange} />
                 </div>
                 <div className="mb-2 5">
-                    <button className="w-full bg-blue-500 text-white text-sm border-none outline-none rounded-lg h-10 hover:bg-blue-400">
+                    <button type="submit" className="w-full bg-blue-500 text-white text-sm border-none outline-none rounded-lg h-10 hover:bg-blue-400">
                         Create Account
                     </button>
                 </div>
