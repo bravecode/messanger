@@ -27,7 +27,7 @@
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "generate": "npx swagger-typescript-api -p ../server/docs/swagger.json -o ./src/_services -n types.ts"
+    "generate": "npx swagger-typescript-api -p ../server/docs/swagger.json -o ./src/_services -n types.ts --no-client"
   },
   "eslintConfig": {
     "extends": [
