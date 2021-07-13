@@ -17,6 +17,9 @@ import (
 // @description Learning GO (with Fiber) by creating messanger copy.
 // @host localhost:8000
 // @BasePath /
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	// Get Env Variables
 	err := godotenv.Load(".env")

@@ -12,6 +12,16 @@ definitions:
       user:
         $ref: '#/definitions/types.UserResponse'
     type: object
+  types.LoginDTO:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
   types.RegisterDTO:
     properties:
       email:
@@ -41,6 +51,49 @@ info:
   title: Messanger API
   version: "1.0"
 paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Login Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.LoginDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.AuthResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Access your account
+      tags:
+      - Auth
+  /auth/profile:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Fetch info about signed in user
+      tags:
+      - Auth
   /auth/register:
     post:
       consumes:
@@ -66,4 +119,9 @@ paths:
       summary: Create new account
       tags:
       - Auth
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
