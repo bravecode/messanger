@@ -1,27 +1,40 @@
 import axios from 'axios';
+import { TypesAuthResponse, TypesUserResponse } from './types';
 
 export {
     register,
-    login
+    login,
+    getProfile,
 }
 
-function register (username: string, email: string, password: string) {
+function register(username: string, email: string, password: string) {
     // Note: Move API urls to .env file to make it env specific (good practice).
     const URL = 'http://localhost:8000/auth/register';
 
-    return axios.post(URL, {
+    return axios.post<TypesAuthResponse>(URL, {
         username,
         email,
         password
     });
 }
 
-function login (email: string, password: string) {
+function login(email: string, password: string) {
     // Note: Move API urls to .env file to make it env specific (good practice).
     const URL = 'http://localhost:8000/auth/login';
 
-    return axios.post(URL, {
+    return axios.post<TypesAuthResponse>(URL, {
         email,
         password
+    });
+}
+
+function getProfile() {
+    // Note: Move API urls to .env file to make it env specific (good practice).
+    const URL = 'http://localhost:8000/auth/profile';
+
+    return axios.get<TypesUserResponse>(URL, {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
     });
 }

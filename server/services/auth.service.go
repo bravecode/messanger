@@ -5,6 +5,7 @@ import (
 	"messanger/models"
 	"messanger/types"
 	"messanger/utils/auth"
+	validatorUtils "messanger/utils/validator"
 
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
@@ -26,12 +27,18 @@ func Login(c *fiber.Ctx) error {
 	b := new(types.LoginDTO)
 
 	if err := c.BodyParser(b); err != nil {
-		return err
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				err.Error(),
+			},
+		})
 	}
 
 	// TODO: This returns ugly error message, refactor it later on
 	if err := v.Struct(b); err != nil {
-		return err
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: validatorUtils.FormatValidatorErrors(err),
+		})
 	}
 
 	u := &types.UserResponse{}
@@ -39,11 +46,19 @@ func Login(c *fiber.Ctx) error {
 	err := models.FindUserByEmail(u, b.Email).Error
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return c.Status(404).SendString("Invalid email or password")
+		return c.Status(404).JSON(&types.ErrorResponse{
+			Errors: []string{
+				"Invalid email or password",
+			},
+		})
 	}
 
 	if err := verifyPassword(u.Password, b.Password); err != nil {
-		return c.Status(404).SendString("Invalid email or password")
+		return c.Status(404).JSON(&types.ErrorResponse{
+			Errors: []string{
+				"Invalid email or password",
+			},
+		})
 	}
 
 	return c.JSON(&types.AuthResponse{
@@ -70,18 +85,28 @@ func Register(c *fiber.Ctx) error {
 	b := new(types.RegisterDTO)
 
 	if err := c.BodyParser(b); err != nil {
-		return c.Status(400).SendString(err.Error())
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				err.Error(),
+			},
+		})
 	}
 
 	// TODO: This returns ugly error message, refactor it later on
 	if err := v.Struct(b); err != nil {
-		return c.Status(400).SendString(err.Error())
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: validatorUtils.FormatValidatorErrors(err),
+		})
 	}
 
 	err := models.FindUserByEmail(&struct{ ID string }{}, b.Email).Error
 
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
-		return c.Status(400).SendString("User with specified email already exists.")
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				"User with specified email already exists.",
+			},
+		})
 	}
 
 	u := &models.User{
@@ -91,7 +116,11 @@ func Register(c *fiber.Ctx) error {
 	}
 
 	if err := models.CreateUser(u); err.Error != nil {
-		return c.Status(400).SendString(err.Error.Error())
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				err.Error.Error(),
+			},
+		})
 	}
 
 	return c.JSON(&types.AuthResponse{
@@ -122,7 +151,11 @@ func Profile(c *fiber.Ctx) error {
 	err := models.FindUser(u, "id = ?", c.Locals("USER_ID").(uint)).Error
 
 	if err != nil {
-		return c.Status(400).SendString(err.Error())
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				err.Error(),
+			},
+		})
 	}
 
 	return c.JSON(u)

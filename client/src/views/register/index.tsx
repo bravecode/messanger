@@ -33,8 +33,10 @@ const Register: React.FC = () => {
             })
             .catch((err) => {
                 console.log('Error');
-                console.log(err);
-            })
+                console.log(err.response.data);
+                console.log(err.response.status);
+                console.log(err.response.headers);
+            });
 
         return;
     }
