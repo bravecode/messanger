@@ -5,6 +5,8 @@ import { Label } from '_components/form/Label';
 import { Input } from '_components/form/Input';
 import { register } from '_services/auth.service';
 import { useForm } from '_helpers/useForm';
+import { useDispatch } from 'react-redux';
+import { registerRequest } from '_store/ducks/auth/actions';
 
 export interface IRegisterData {
     username: string;
@@ -19,6 +21,8 @@ export const registerDataDefaults: IRegisterData  = {
 }
 
 const Register: React.FC = () => {
+    const dispatch = useDispatch();
+
     const { data, onInputChange } = useForm<IRegisterData>({
         initialData: registerDataDefaults
     });
@@ -27,16 +31,22 @@ const Register: React.FC = () => {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        register(data.username, data.email, data.password)
-            .then((res) => {
-                console.log(res);
-            })
-            .catch((err) => {
-                console.log('Error');
-                console.log(err.response.data);
-                console.log(err.response.status);
-                console.log(err.response.headers);
-            });
+        dispatch(registerRequest({
+            username: data.username,
+            email: data.email,
+            password: data.password,
+        }));
+
+        // register(data.username, data.email, data.password)
+        //     .then((res) => {
+        //         console.log(res);
+        //     })
+        //     .catch((err) => {
+        //         console.log('Error');
+        //         console.log(err.response.data);
+        //         console.log(err.response.status);
+        //         console.log(err.response.headers);
+        //     });
 
         return;
     }

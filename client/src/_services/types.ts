@@ -10,12 +10,16 @@
  */
 
 export interface TypesAccessResponse {
-  token?: string;
+  token: string;
 }
 
 export interface TypesAuthResponse {
-  auth?: TypesAccessResponse;
-  user?: TypesUserResponse;
+  auth: TypesAccessResponse;
+  user: TypesUserResponse;
+}
+
+export interface TypesErrorResponse {
+  errors?: string[];
 }
 
 export interface TypesLoginDTO {
@@ -30,7 +34,7 @@ export interface TypesRegisterDTO {
 }
 
 export interface TypesUserResponse {
-  email?: string;
-  id?: number;
-  username?: string;
+  email: string;
+  id: number;
+  username: string;
 }

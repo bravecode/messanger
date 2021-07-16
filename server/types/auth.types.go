@@ -11,17 +11,17 @@ type RegisterDTO struct {
 }
 
 type UserResponse struct {
-	ID       uint   `json:"id"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
+	ID       uint   `json:"id" validate:"required"`
+	Username string `json:"username" validate:"required"`
+	Email    string `json:"email" validate:"required"`
 	Password string `json:"-"`
 }
 
 type AccessResponse struct {
-	Token string `json:"token"`
+	Token string `json:"token" validate:"required"`
 }
 
 type AuthResponse struct {
-	User *UserResponse   `json:"user"`
-	Auth *AccessResponse `json:"auth"`
+	User *UserResponse   `json:"user" validate:"required"`
+	Auth *AccessResponse `json:"auth" validate:"required"`
 }

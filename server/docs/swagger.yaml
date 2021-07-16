@@ -4,6 +4,8 @@ definitions:
     properties:
       token:
         type: string
+    required:
+    - token
     type: object
   types.AuthResponse:
     properties:
@@ -11,6 +13,16 @@ definitions:
         $ref: '#/definitions/types.AccessResponse'
       user:
         $ref: '#/definitions/types.UserResponse'
+    required:
+    - auth
+    - user
+    type: object
+  types.ErrorResponse:
+    properties:
+      errors:
+        items:
+          type: string
+        type: array
     type: object
   types.LoginDTO:
     properties:
@@ -43,6 +55,10 @@ definitions:
         type: integer
       username:
         type: string
+    required:
+    - email
+    - id
+    - username
     type: object
 host: localhost:8000
 info:
@@ -72,7 +88,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            type: string
+            $ref: '#/definitions/types.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
       summary: Access your account
       tags:
       - Auth
@@ -88,7 +108,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            type: string
+            $ref: '#/definitions/types.ErrorResponse'
       security:
       - ApiKeyAuth: []
       summary: Fetch info about signed in user
@@ -115,7 +135,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            type: string
+            $ref: '#/definitions/types.ErrorResponse'
       summary: Create new account
       tags:
       - Auth

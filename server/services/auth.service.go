@@ -20,7 +20,8 @@ import (
 // @Produce json
 // @Param data body types.LoginDTO true "Login Data"
 // @Success 200 {object} types.AuthResponse
-// @Failure 400 {object} string
+// @Failure 400 {object} types.ErrorResponse
+// @Failure 404 {object} types.ErrorResponse
 // @Router /auth/login [post]
 func Login(c *fiber.Ctx) error {
 	v := validator.New()
@@ -78,7 +79,7 @@ func Login(c *fiber.Ctx) error {
 // @Produce json
 // @Param data body types.RegisterDTO true "Register Data"
 // @Success 200 {object} types.AuthResponse
-// @Failure 400 {object} string
+// @Failure 400 {object} types.ErrorResponse
 // @Router /auth/register [post]
 func Register(c *fiber.Ctx) error {
 	v := validator.New()
@@ -142,7 +143,7 @@ func Register(c *fiber.Ctx) error {
 // @Tags Auth
 // @Produce json
 // @Success 200 {object} types.UserResponse
-// @Failure 400 {object} string
+// @Failure 400 {object} types.ErrorResponse
 // @Router /auth/profile [get]
 // @Security ApiKeyAuth
 func Profile(c *fiber.Ctx) error {

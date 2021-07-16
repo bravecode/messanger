@@ -57,7 +57,13 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
@@ -87,7 +93,7 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
@@ -126,7 +132,7 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
@@ -136,6 +142,9 @@ var doc = `{
     "definitions": {
         "types.AccessResponse": {
             "type": "object",
+            "required": [
+                "token"
+            ],
             "properties": {
                 "token": {
                     "type": "string"
@@ -144,12 +153,27 @@ var doc = `{
         },
         "types.AuthResponse": {
             "type": "object",
+            "required": [
+                "auth",
+                "user"
+            ],
             "properties": {
                 "auth": {
                     "$ref": "#/definitions/types.AccessResponse"
                 },
                 "user": {
                     "$ref": "#/definitions/types.UserResponse"
+                }
+            }
+        },
+        "types.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -189,6 +213,11 @@ var doc = `{
         },
         "types.UserResponse": {
             "type": "object",
+            "required": [
+                "email",
+                "id",
+                "username"
+            ],
             "properties": {
                 "email": {
                     "type": "string"
