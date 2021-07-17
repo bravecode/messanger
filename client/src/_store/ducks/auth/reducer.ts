@@ -6,6 +6,8 @@ import {
     loginRequest,
     loginError,
     loginSuccess,
+    logoutRequest,
+    logoutSuccess,
 } from './actions';
 
 export interface IAuthState {
@@ -28,6 +30,12 @@ const defaultState: IAuthState = {
 
 export default createReducer(defaultState, (builder) => {
     builder
+        .addCase(logoutRequest, (state) => {
+            state.pending = true;
+        })
+        .addCase(logoutSuccess, (state) => {
+            state = defaultState;
+        })
         .addMatcher(isAnyOf(registerRequest, loginRequest), (state) => {
             state.pending = true;
         })

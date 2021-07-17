@@ -2,7 +2,7 @@ import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 import { login, register } from '_services/auth.service';
 import { AxiosError, AxiosResponse } from 'axios';
 import { TypesAuthResponse, TypesErrorResponse } from '_services/types';
-import { loginRequest, registerError, registerRequest, registerSuccess } from './actions';
+import { loginRequest, logoutRequest, logoutSuccess, registerError, registerRequest, registerSuccess } from './actions';
 import { SagaIterator } from 'redux-saga';
 
 // Workers
@@ -58,6 +58,14 @@ function* handleLoginRequest({ payload }: any): SagaIterator {
     }
 }
 
+function* handleLogoutRequest(): SagaIterator {
+    // Remove access token
+    localStorage.removeItem('token');
+
+    // & restore store to default state
+    yield put(logoutSuccess);
+}
+
 // Watchers
 export function* watchRegisterRequest() {
     yield takeEvery(registerRequest, handleRegisterRequest);
@@ -67,9 +75,14 @@ export function* watchLoginRequest() {
     yield takeEvery(loginRequest, handleLoginRequest);
 }
 
+export function* watchLogoutRequest() {
+    yield takeEvery(logoutRequest, handleLogoutRequest);
+}
+
 export default function* authSaga() {
     yield all([
         fork(watchRegisterRequest),
         fork(watchLoginRequest),
+        fork(watchLogoutRequest),
     ])
 }

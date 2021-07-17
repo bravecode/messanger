@@ -11,3 +11,7 @@ export const registerError = createAction<string[]>('auth:register:error');
 export const loginRequest = createAction<TypesLoginDTO>('auth:login:request');
 export const loginSuccess = createAction<IAuthUser>('auth:login:success');
 export const loginError = createAction<string[]>('auth:login:error');
+
+// Action - Logout
+export const logoutRequest = createAction('auth:logout:request');
+export const logoutSuccess = createAction('auth:logout:success');

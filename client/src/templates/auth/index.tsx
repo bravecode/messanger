@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route, Redirect, useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+
+import { IStore } from '_store';
 import logoPath from '_assets/svg/logo.svg';
 
 // Views
 import Register from 'views/register';
 import Login from 'views/login';
-import { useSelector } from 'react-redux';
-import { IStore } from '_store';
-import { useEffect } from 'react';
+
 
 const TemplateAuth: React.FC = () => {
     const history = useHistory();
