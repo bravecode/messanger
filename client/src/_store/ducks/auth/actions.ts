@@ -1,5 +1,5 @@
 import { createAction } from '@reduxjs/toolkit';
-import { TypesRegisterDTO } from '_services/types';
+import { TypesLoginDTO, TypesRegisterDTO } from '_services/types';
 import { IAuthUser } from './reducer';
 
 // Action - Register
@@ -8,3 +8,6 @@ export const registerSuccess = createAction<IAuthUser>('auth:register:success');
 export const registerError = createAction<string[]>('auth:register:error');
 
 // Action - Login
+export const loginRequest = createAction<TypesLoginDTO>('auth:login:request');
+export const loginSuccess = createAction<IAuthUser>('auth:login:success');
+export const loginError = createAction<string[]>('auth:login:error');

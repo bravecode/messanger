@@ -1,8 +1,11 @@
-import { createReducer } from '@reduxjs/toolkit';
+import { createReducer, isAnyOf } from '@reduxjs/toolkit';
 import {
     registerRequest,
     registerError,
     registerSuccess,
+    loginRequest,
+    loginError,
+    loginSuccess,
 } from './actions';
 
 export interface IAuthState {
@@ -25,17 +28,19 @@ const defaultState: IAuthState = {
 
 export default createReducer(defaultState, (builder) => {
     builder
-        .addCase(registerRequest, (state) => {
+        .addMatcher(isAnyOf(registerRequest, loginRequest), (state) => {
             state.pending = true;
         })
-        .addCase(registerError, (state, action) => {
+        .addMatcher(isAnyOf(registerError, loginError), (state, action) => {
             const { payload } = action;
 
             state.errors = payload;
             state.pending = false;
         })
-        .addCase(registerSuccess, (state, action) => {
+        .addMatcher(isAnyOf(registerSuccess, loginSuccess), (state, action) => {
             const { payload } = action;
+
+            console.log('Success');
 
             state.user = payload;
             state.pending = false;

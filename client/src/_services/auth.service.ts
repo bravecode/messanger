@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { IAuthUser } from '_store/ducks/auth/reducer';
-import { TypesAuthResponse, TypesErrorResponse, TypesRegisterDTO, TypesUserResponse } from './types';
+import { TypesAuthResponse, TypesLoginDTO, TypesRegisterDTO, TypesUserResponse } from './types';
 
 export {
     register,
@@ -15,7 +14,7 @@ function register(username: string, email: string, password: string) {
     const registerDTO: TypesRegisterDTO = {
         username,
         email,
-        password
+        password,
     } 
 
     return axios.post<TypesAuthResponse>(URL, registerDTO);
@@ -25,10 +24,12 @@ function login(email: string, password: string) {
     // Note: Move API urls to .env file to make it env specific (good practice).
     const URL = 'http://localhost:8000/auth/login';
 
-    return axios.post<TypesAuthResponse>(URL, {
+    const loginDTO: TypesLoginDTO = {
         email,
-        password
-    });
+        password,
+    }
+
+    return axios.post<TypesAuthResponse>(URL, loginDTO);
 }
 
 function getProfile() {

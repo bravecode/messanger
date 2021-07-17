@@ -1,5 +1,4 @@
 import React from 'react';
-import { UserGroupIcon } from '@heroicons/react/solid';
 
 const Tabs: React.FC = () => {
     return (
