@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
-import { loginRequest } from '_store/ducks/auth/actions';
+import { clearErrors, loginRequest } from '_store/ducks/auth/actions';
 
 import { Form, ILoginData } from './components/Form';
 
@@ -18,6 +18,10 @@ const Login: React.FC = () => {
         return;
     }
 
+    const handleErrorsClear = () => {
+        dispatch(clearErrors());
+    }
+
     return (
         <div className="grid justify-center">
             
@@ -30,7 +34,7 @@ const Login: React.FC = () => {
                 </p>
             </header>
 
-            <Form onSubmit={handleSubmit} />
+            <Form onSubmit={handleSubmit} onErrorsClear={handleErrorsClear} />
 
         </div>
     );

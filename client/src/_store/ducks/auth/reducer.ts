@@ -8,6 +8,7 @@ import {
     loginSuccess,
     logoutRequest,
     logoutSuccess,
+    clearErrors,
 } from './actions';
 
 export interface IAuthState {
@@ -36,6 +37,9 @@ export default createReducer(defaultState, (builder) => {
         .addCase(logoutSuccess, (state) => {
             state = defaultState;
         })
+        .addCase(clearErrors, (state) => {
+            state.errors = undefined;
+        })
         .addMatcher(isAnyOf(registerRequest, loginRequest), (state) => {
             state.pending = true;
         })
@@ -47,8 +51,6 @@ export default createReducer(defaultState, (builder) => {
         })
         .addMatcher(isAnyOf(registerSuccess, loginSuccess), (state, action) => {
             const { payload } = action;
-
-            console.log('Success');
 
             state.user = payload;
             state.pending = false;

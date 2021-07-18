@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
-import { registerRequest } from '_store/ducks/auth/actions';
+import { clearErrors, registerRequest } from '_store/ducks/auth/actions';
 
 import { Form, IRegisterData } from './components/Form';
 
@@ -19,6 +19,10 @@ const Register: React.FC = () => {
         return;
     }
 
+    const handleErrorsClear = () => {
+        dispatch(clearErrors());
+    }
+
     return (
         <div className="grid justify-center">
             
@@ -31,7 +35,7 @@ const Register: React.FC = () => {
                 </p>
             </header>
 
-            <Form onSubmit={handleSubmit} />
+            <Form onSubmit={handleSubmit} onErrorsClear={handleErrorsClear} />
 
         </div>
     );

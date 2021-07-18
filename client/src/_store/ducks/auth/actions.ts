@@ -15,3 +15,6 @@ export const loginError = createAction<string[]>('auth:login:error');
 // Action - Logout
 export const logoutRequest = createAction('auth:logout:request');
 export const logoutSuccess = createAction('auth:logout:success');
+
+// Action - Clear Errors
+export const clearErrors = createAction('auth:clearErrors');

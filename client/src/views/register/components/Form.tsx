@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { Alert } from '_components/alert/Alert';
 import { Input } from '_components/form/Input';
 import { Label } from '_components/form/Label';
 import { useForm } from '_helpers/useForm';
@@ -20,17 +21,19 @@ export const registerDataDefaults: IRegisterData  = {
 
 export interface IFormProps {
     onSubmit: (data: IRegisterData) => void;
+    onErrorsClear: () => void;
 }
 
 const Form: React.FC<IFormProps> = ({
-    onSubmit
+    onSubmit,
+    onErrorsClear
 }) => {
     const { data, onInputChange } = useForm<IRegisterData>({
         initialData: registerDataDefaults
     });
 
     // Store
-    const { pending } = useSelector((store: IStore) => store.auth);
+    const { pending, errors } = useSelector((store: IStore) => store.auth);
 
     // Handlers
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -41,6 +44,17 @@ const Form: React.FC<IFormProps> = ({
 
     return (
         <form onSubmit={handleSubmit}>
+            {
+                !!errors?.length && (
+                    <div className="mb-2.5">
+                        <Alert
+                            variant="error"
+                            title="Oops!"
+                            content={errors}
+                        />
+                    </div>
+                )
+            }
             <div className="mb-2.5">
                 <Label htmlFor="username">
                     Username
@@ -67,7 +81,7 @@ const Form: React.FC<IFormProps> = ({
                 </button>
             </div>
             <div className="mb-2 5">
-                <Link to="/auth/login" className="text-xs hover:text-blue-500">
+                <Link to="/auth/login" className="text-xs hover:text-blue-500" onClick={onErrorsClear}>
                     Already have an account? Sign In.
                 </Link>
             </div>
