@@ -6,6 +6,7 @@ import { Label } from "_components/form/Label";
 import { Alert } from "_components/alert/Alert";
 import { useForm } from "_helpers/useForm";
 import { IStore } from "_store";
+import { Spinner } from "_components/spinner/Spinner";
 
 export interface ILoginData {
     email: string;
@@ -67,7 +68,9 @@ const Form: React.FC<IFormProps> = ({
             </div>
             <div className="mb-2 5">
                 <button className="w-full bg-blue-500 text-white text-sm border-none outline-none rounded-lg h-10 hover:bg-blue-400">
-                    { pending ? <div>Loading</div> : <span>Login</span> }
+                    {
+                        pending ? <Spinner className="w-full text-white" /> : <>Login</>
+                    }
                 </button>
             </div>
             <div className="mb-2 5">
