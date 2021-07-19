@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
+import rootSaga from './ducks/rootSaga';
 
 // Reducers
 import auth from './ducks/auth/reducer';
-import authSaga from './ducks/auth/saga';
 
 // Middlewares
 import sagaMiddleware from './middlewares/saga';
@@ -16,7 +16,7 @@ const store = configureStore({
     ],
 });
 
-sagaMiddleware.run(authSaga)
+sagaMiddleware.run(rootSaga)
 
 export type IStore = ReturnType<typeof store.getState>
 

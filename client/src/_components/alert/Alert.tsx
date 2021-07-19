@@ -19,6 +19,11 @@ const Alert: React.FC<IAlertProps> = ({
     className,
     onClose
 }) => {
+    const _containerStyles = classNames({
+        'border border-solid border-gray-300 rounded-lg p-2.5 flex gap-2': true,
+        [className as string]: className
+    });
+
     // Handlers
     const handleClose = () => {
         onClose && onClose();
@@ -46,7 +51,7 @@ const Alert: React.FC<IAlertProps> = ({
     }
 
     return (
-        <div className="border border-solid border-gray-300 rounded-lg p-2.5 flex gap-2">
+        <div className={_containerStyles}>
             <div className="h-full w-6">
                 <div className="w-6 h-6 rounded-full bg-red-200 flex items-center justify-center">
                     <ExclamationIcon className="w-4 text-red-500" />
