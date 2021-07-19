@@ -68,9 +68,7 @@ const Form: React.FC<IFormProps> = ({
             </div>
             <div className="mb-2 5">
                 <button className="w-full bg-blue-500 text-white text-sm border-none outline-none rounded-lg h-10 hover:bg-blue-400">
-                    {
-                        pending ? <Spinner className="w-full text-white" /> : <>Login</>
-                    }
+                    { pending ? <Spinner className="w-full text-white" /> : <>Login</> }
                 </button>
             </div>
             <div className="mb-2 5">

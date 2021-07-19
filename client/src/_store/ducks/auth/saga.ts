@@ -4,23 +4,28 @@ import { AxiosError, AxiosResponse } from 'axios';
 import { TypesAuthResponse, TypesErrorResponse } from '_services/types';
 import { loginRequest, logoutRequest, logoutSuccess, registerError, registerRequest, registerSuccess } from './actions';
 import { SagaIterator } from 'redux-saga';
+import { Action } from '@reduxjs/toolkit';
 
+// Note: Maybe a helper guard util that will automatically check if our action type is correct
+// in order to access payload without TS warnings / errors?
 // Workers
-function* handleRegisterRequest({ payload }: any): SagaIterator {
+function* handleRegisterRequest(action: Action): SagaIterator {
     try {
-        const { username, email, password } = payload;
+        if (registerRequest.match(action)) {
+            const { username, email, password } = action.payload;
         
-        const response: AxiosResponse<TypesAuthResponse> = yield call(register, username, email, password);
-        
-        // Store access token
-        localStorage.setItem('token', response.data.auth.token);
+            const response: AxiosResponse<TypesAuthResponse> = yield call(register, username, email, password);
+            
+            // Store access token
+            localStorage.setItem('token', response.data.auth.token);
 
-        // Store user data
-        yield put(registerSuccess({
-            ID: response.data.user.id,
-            email: response.data.user.email,
-            username: response.data.user.username,
-        }));
+            // Store user data
+            yield put(registerSuccess({
+                ID: response.data.user.id,
+                email: response.data.user.email,
+                username: response.data.user.username,
+            }));
+        }
     } catch (err) {
         const typed: AxiosError<TypesErrorResponse> = err;
         
@@ -32,21 +37,23 @@ function* handleRegisterRequest({ payload }: any): SagaIterator {
     }
 }
 
-function* handleLoginRequest({ payload }: any): SagaIterator {
+function* handleLoginRequest(action: Action): SagaIterator {
     try {
-        const { email, password } = payload;
+        if (loginRequest.match(action)) {
+            const { email, password } = action.payload;
         
-        const response: AxiosResponse<TypesAuthResponse> = yield call(login, email, password);
-        
-        // Store access token
-        localStorage.setItem('token', response.data.auth.token);
+            const response: AxiosResponse<TypesAuthResponse> = yield call(login, email, password);
+            
+            // Store access token
+            localStorage.setItem('token', response.data.auth.token);
 
-        // Store user data
-        yield put(registerSuccess({
-            ID: response.data.user.id,
-            email: response.data.user.email,
-            username: response.data.user.username,
-        }));
+            // Store user data
+            yield put(registerSuccess({
+                ID: response.data.user.id,
+                email: response.data.user.email,
+                username: response.data.user.username,
+            }));
+        }
     } catch (err) {
         const typed: AxiosError<TypesErrorResponse> = err;
         
