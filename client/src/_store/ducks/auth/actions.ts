@@ -16,5 +16,10 @@ export const loginError = createAction<string[]>('auth:login:error');
 export const logoutRequest = createAction('auth:logout:request');
 export const logoutSuccess = createAction('auth:logout:success');
 
+// Action - Get Profile
+export const getProfileRequest = createAction('auth:getProfile:request');
+export const getProfileSuccess = createAction<IAuthUser>('auth:getProfile:success');
+export const getProfileError = createAction<string[]>('auth:getProfile:error');
+
 // Action - Clear Errors
 export const clearErrors = createAction('auth:clearErrors');

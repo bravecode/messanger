@@ -9,6 +9,9 @@ import {
     logoutRequest,
     logoutSuccess,
     clearErrors,
+    getProfileRequest,
+    getProfileError,
+    getProfileSuccess,
 } from './actions';
 
 export interface IAuthState {
@@ -40,20 +43,20 @@ export default createReducer(defaultState, (builder) => {
         .addCase(clearErrors, (state) => {
             state.errors = undefined;
         })
-        .addMatcher(isAnyOf(registerRequest, loginRequest), (state) => {
+        .addMatcher(isAnyOf(registerRequest, loginRequest, getProfileRequest), (state) => {
             state.pending = true;
         })
-        .addMatcher(isAnyOf(registerError, loginError), (state, action) => {
+        .addMatcher(isAnyOf(registerError, loginError, getProfileError), (state, action) => {
             const { payload } = action;
 
+            state.pending = false;
             state.errors = payload;
-            state.pending = false;
         })
-        .addMatcher(isAnyOf(registerSuccess, loginSuccess), (state, action) => {
+        .addMatcher(isAnyOf(registerSuccess, loginSuccess, getProfileSuccess), (state, action) => {
             const { payload } = action;
 
-            state.user = payload;
             state.pending = false;
+            state.user = payload;
         })
         .addDefaultCase(() => {});
 });

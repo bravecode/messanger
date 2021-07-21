@@ -1,8 +1,8 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
-import { login, register } from '_services/auth.service';
+import { getProfile, login, register } from '_services/auth.service';
 import { AxiosError, AxiosResponse } from 'axios';
-import { TypesAuthResponse, TypesErrorResponse } from '_services/types';
-import { loginRequest, logoutRequest, logoutSuccess, registerError, registerRequest, registerSuccess } from './actions';
+import { TypesAuthResponse, TypesErrorResponse, TypesUserResponse } from '_services/types';
+import { getProfileRequest, getProfileSuccess, loginRequest, logoutRequest, logoutSuccess, registerError, registerRequest, registerSuccess } from './actions';
 import { SagaIterator } from 'redux-saga';
 import { Action } from '@reduxjs/toolkit';
 
@@ -65,6 +65,30 @@ function* handleLoginRequest(action: Action): SagaIterator {
     }
 }
 
+function* handleGetProfileRequest(): SagaIterator {
+    try {
+        const response: AxiosResponse<TypesUserResponse> = yield call(getProfile);
+
+        // Store user data
+        yield put(getProfileSuccess({
+            ID: response.data.id,
+            email: response.data.email,
+            username: response.data.username,
+        }));
+    } catch (err) {
+        const typed: AxiosError<TypesErrorResponse> = err;
+
+        // Clear token to prevent bad requests
+        localStorage.removeItem('token');
+        
+        if (typed.response?.data.errors) {
+            yield put(registerError(typed.response.data.errors))  
+        } else {
+            yield put(registerError(['Unknown error has occured.']))  
+        }
+    }
+}
+
 function* handleLogoutRequest(): SagaIterator {
     // Remove access token
     localStorage.removeItem('token');
@@ -82,6 +106,10 @@ export function* watchLoginRequest() {
     yield takeEvery(loginRequest, handleLoginRequest);
 }
 
+export function* watchGetProfileRequest() {
+    yield takeEvery(getProfileRequest, handleGetProfileRequest);
+}
+
 export function* watchLogoutRequest() {
     yield takeEvery(logoutRequest, handleLogoutRequest);
 }
@@ -90,6 +118,7 @@ export default function* authSaga() {
     yield all([
         fork(watchRegisterRequest),
         fork(watchLoginRequest),
+        fork(watchGetProfileRequest),
         fork(watchLogoutRequest),
     ])
 }

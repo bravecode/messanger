@@ -1,26 +1,39 @@
 import React, { useEffect } from 'react';
-import { Switch, Route, useHistory } from 'react-router-dom';
-import logoPath from '_assets/svg/logo.svg';
-import { useSelector } from 'react-redux';
+import { Switch, Route, Redirect } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { IStore } from '_store';
+import logoPath from '_assets/svg/logo.svg';
 
 // Views
 import Welcome from 'views/welcome';
 import Messanger from 'views/messanger';
+import { Spinner } from '_components/spinner/Spinner';
+import { getProfileRequest } from '_store/ducks/auth/actions';
 
 const TemplateDefault: React.FC = () => {
-    const history = useHistory();
-
     // Store
-    const { user } = useSelector((store: IStore) => store.auth);
+    const dispatch = useDispatch();
+    const { user, pending } = useSelector((store: IStore) => store.auth);
 
     // Validate if user is logged in
     useEffect(() => {
-        if (user === undefined || !localStorage.getItem('token')) {
-            history.push('/auth/login');
+        if (user === undefined && localStorage.getItem('token')) {
+            dispatch(getProfileRequest());
         }
-    }, [user, history]);
+    }, [user, dispatch]);
+
+    if (pending) {
+        return (
+            <div className="h-screen w-screen bg-gray-200 flex items-center justify-center">
+                <Spinner className="text-black" />
+            </div>
+        );
+    }
+
+    if (user === undefined && !localStorage.getItem('token')) {
+        return <Redirect to="/auth/login" />
+    }
 
     return (
         <div className="font-Poppins h-screen w-screen bg-gray-200">
