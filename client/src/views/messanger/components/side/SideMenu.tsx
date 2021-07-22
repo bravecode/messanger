@@ -1,22 +1,25 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import {
+    LogoutIcon,
+    ChatIcon,
+    UsersIcon,
+    CogIcon
+} from '@heroicons/react/outline';
 
 const SideMenu: React.FC = () => {
     return (
-        <nav className="h-10 grid grid-cols-4 mb-8 bg-gray-300">
+        <nav className="h-10 grid grid-cols-4 mb-8 bg-gray-100">
             <div className="h-full flex items-center justify-center">
-                <Link to="/auth/logout">
-                    Logout
-                </Link>
+                <ChatIcon className="text-gray-400 w-5" />
             </div>
             <div className="h-full flex items-center justify-center">
-                X
+                <UsersIcon className="text-gray-400 w-5" />
             </div>
             <div className="h-full flex items-center justify-center">
-                X
+                <CogIcon className="text-gray-400 w-5" />
             </div>
             <div className="h-full flex items-center justify-center">
-                X
+                <LogoutIcon className="text-gray-400 w-5" />
             </div>
         </nav>
     );
