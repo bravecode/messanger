@@ -1,18 +1,24 @@
 import React, { useState } from 'react';
 import { ThumbUpIcon, EmojiHappyIcon, PhotographIcon, PuzzleIcon } from '@heroicons/react/outline';
-import { Emoji } from '_components/emoji/Emoji';
 import { EmojiPicker } from '_components/emoji/EmojiPicker';
+import { FooterGame } from './FooterGame';
 
 const Footer: React.FC = () => {
     const [pickerOpen, setPickerOpen] = useState(false);
+    const [gameOpen, setGameOpen] = useState(false);
 
     // Handlers
     const handleEmojiPickerToggle = () => {
         setPickerOpen((prev) => !prev);
     }
 
+    const handleGameToggle = () => {
+        setGameOpen((prev) => !prev);
+    }
+
     const handleEmojiPickerSelect = (value: string) => {
         setPickerOpen(false);
+        setGameOpen(false);
 
         console.log(value);
     }
@@ -23,15 +29,15 @@ const Footer: React.FC = () => {
 
     return (
         <div className="border-t border-gray-200 border-solid p-5 mt-20 flex gap-2.5">
-            <div className="h-10 w-10 flex items-center justify-center">
-                <PhotographIcon
-                    className="text-gray-300 w-6"
+            <div className="h-10 w-10 flex items-center justify-center relative">
+                <FooterGame 
+                    open={gameOpen}
+                    onSelect={handleEmojiPickerSelect}
                 />
-            </div>
-            <div className="h-10 w-10 flex items-center justify-center">
-                <PuzzleIcon 
-                    className="text-gray-300 w-6"
-                />
+
+                <button className="text-gray-300 w-6 hover:text-blue-400 transition cursor-pointer" onClick={handleGameToggle}>
+                    <PuzzleIcon className="w-full" />
+                </button>
             </div>
             <input 
                 type="text" 

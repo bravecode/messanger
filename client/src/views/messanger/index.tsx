@@ -4,6 +4,7 @@ import { Side } from './components/side/Side';
 import { MessageGroup } from './components/main/MessageGroup';
 import { Header } from './components/main/Header';
 import { Footer } from './components/main/Footer';
+import { Game } from './components/main/Game';
 
 const Messanger: React.FC = () => {
     return (
@@ -37,6 +38,10 @@ const Messanger: React.FC = () => {
                     type='sent'
                 />
 
+                <Game status="received" />
+
+                <Game status="finished" />
+
                 <MessageGroup 
                     author={{
                         username: 'John Doe',
@@ -47,6 +52,8 @@ const Messanger: React.FC = () => {
                     ]}
                     type='received'
                 />
+
+                <Game status="sent" />
 
                 <Footer />
 

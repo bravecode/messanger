@@ -16,6 +16,7 @@ const EmojiPicker: React.FC<IEmojiPickerProps> = ({
         'hidden': !open,
     });
 
+
     return (
         <div className={_containerStyles}>
             <EmojiPickerButton symbol="😀" label="Emoji - grinning face" onSelect={onSelect} />

@@ -1,5 +1,4 @@
 import React from 'react';
-import classNames from 'classnames';
 
 export interface IEmojiProps {
     label: string;
@@ -12,13 +11,8 @@ const Emoji: React.FC<IEmojiProps> = ({
     symbol,
     className
 }) => {
-    const _containerStyles = classNames({
-        '': true,
-        [className as string]: className
-    });
-
     return (
-        <span className="emoji" role="img" aria-label={label}>
+        <span className={className} role="img" aria-label={label}>
             { symbol }
         </span>
     );
