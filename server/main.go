@@ -30,6 +30,7 @@ func main() {
 
 	database.Connect()
 	database.Migrate(&models.User{})
+	database.Migrate(&models.Relationship{})
 
 	app := fiber.New()
 
@@ -42,7 +43,8 @@ func main() {
 	app.Get("/swagger/*", swagger.Handler)
 
 	routes.AuthRoutes(app)
-	routes.RoomRoutes(app)
+	routes.SocketRoutes(app)
+	routes.RelationshipRoutes(app)
 
 	app.Listen(":8000")
 }
