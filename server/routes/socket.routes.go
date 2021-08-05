@@ -3,14 +3,22 @@ package routes
 import (
 	"fmt"
 	"messanger/services"
-	"messanger/utils/middleware"
 
 	"github.com/antoniodipinto/ikisocket"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/websocket/v2"
 )
 
 func SocketRoutes(app *fiber.App) {
-	app.Use(middleware.Auth).Get("/ws/connect", ikisocket.New(services.SocketConnection))
+	app.Use(func(c *fiber.Ctx) error {
+		// IsWebSocketUpgrade returns true if the client
+		// requested upgrade to the WebSocket protocol.
+		if websocket.IsWebSocketUpgrade(c) {
+			c.Locals("allowed", true)
+			return c.Next()
+		}
+		return fiber.ErrUpgradeRequired
+	}).Get("/ws/:id", ikisocket.New(services.SocketConnection))
 
 	ikisocket.On(ikisocket.EventDisconnect, func(ep *ikisocket.EventPayload) {
 		fmt.Println("User with ID is deleted: ")

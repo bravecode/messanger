@@ -4,12 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IStore } from '_store';
 import logoPath from '_assets/svg/logo.svg';
+import { getProfileRequest } from '_store/ducks/auth/actions';
+import { connectRequest } from '_store/ducks/socket/actions';
 
 // Views
 import Welcome from 'views/welcome';
 import Messanger from 'views/messanger';
 import { Spinner } from '_components/spinner/Spinner';
-import { getProfileRequest } from '_store/ducks/auth/actions';
 
 const TemplateDefault: React.FC = () => {
     // Store
@@ -20,6 +21,10 @@ const TemplateDefault: React.FC = () => {
     useEffect(() => {
         if (user === undefined && localStorage.getItem('token')) {
             dispatch(getProfileRequest());
+        }
+
+        if (user !== undefined && localStorage.getItem('token')) {
+            dispatch(connectRequest());
         }
     }, [user, dispatch]);
 

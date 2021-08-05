@@ -9,11 +9,11 @@ var Users = map[uint]string{}
 
 func SocketConnection(kws *ikisocket.Websocket) {
 	// Connect userID & socketID
-	userID := kws.Locals("USER_ID").(uint)
-	Users[userID] = kws.UUID
+	//userID := kws.Locals("USER_ID").(uint)
+	Users[32] = kws.UUID
 
 	// Store ID in session
-	kws.SetAttribute("uid", userID)
+	kws.SetAttribute("uid", 32)
 
 	// TODO: Notify user's friends to update status.
 	kws.Broadcast([]byte("New user in the house."), true)
