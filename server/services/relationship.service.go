@@ -6,12 +6,14 @@ import (
 	"messanger/types"
 	validatorUtils "messanger/utils/validator"
 
+	"github.com/antoniodipinto/ikisocket"
+
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
 
 func RelationshipList(c *fiber.Ctx) error {
-	currentUserID := c.Locals("USER_ID")
+	currentUserID := c.Locals("USER_ID").(uint)
 
 	var r []models.Relationship
 
@@ -86,6 +88,8 @@ func RelationshipInvite(c *fiber.Ctx) error {
 		})
 	}
 
+	ikisocket.EmitTo(Users[b.To], []byte("New Invite for you!"))
+
 	return c.JSON(&types.RelationshipResponse{
 		UserA:  r.UserA,
 		UserB:  r.UserB,
@@ -126,6 +130,8 @@ func RelationshipAccept(c *fiber.Ctx) error {
 		})
 	}
 
+	ikisocket.EmitToList([]string{Users[r.UserA], Users[r.UserB]}, []byte("Invite Accepted!"))
+
 	return c.SendStatus(200)
 }
 
@@ -160,6 +166,8 @@ func RelationshipDecline(c *fiber.Ctx) error {
 			},
 		})
 	}
+
+	ikisocket.EmitToList([]string{Users[r.UserA], Users[r.UserB]}, []byte("Invite Declined!"))
 
 	return c.SendStatus(200)
 }

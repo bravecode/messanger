@@ -2,28 +2,15 @@ package routes
 
 import (
 	"fmt"
+	"messanger/services"
+	"messanger/utils/middleware"
 
 	"github.com/antoniodipinto/ikisocket"
 	"github.com/gofiber/fiber/v2"
 )
 
 func SocketRoutes(app *fiber.App) {
-	Users := map[string]string{}
-
-	app.Get("/ws/:userID", ikisocket.New(func(kws *ikisocket.Websocket) {
-		// Connect userID & socketID
-		userID := kws.Locals("USER_ID").(string)
-		Users[userID] = kws.UUID
-
-		// Store ID in session
-		kws.SetAttribute("uid", userID)
-
-		// TODO: Notify user's friends to update status.
-		kws.Broadcast([]byte("New user in the house."), true)
-
-		//Write welcome message
-		kws.Emit([]byte("Connected"))
-	}))
+	app.Use(middleware.Auth).Get("/ws/connect", ikisocket.New(services.SocketConnection))
 
 	ikisocket.On(ikisocket.EventDisconnect, func(ep *ikisocket.EventPayload) {
 		fmt.Println("User with ID is deleted: ")
