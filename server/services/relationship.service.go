@@ -48,7 +48,6 @@ func RelationshipInvite(c *fiber.Ctx) error {
 	currentUserID := c.Locals("USER_ID").(uint)
 
 	// Check if user exist (may be solved by relations)
-
 	vr := &models.Relationship{}
 	r := &models.Relationship{}
 
@@ -100,7 +99,7 @@ func RelationshipAccept(c *fiber.Ctx) error {
 
 	r := &models.Relationship{}
 
-	if err := models.FindRelationship(r, "id = ?", rid); err != nil {
+	if err := models.FindRelationship(r, "id = ?", rid); err.Error != nil {
 		return c.Status(400).JSON(&types.ErrorResponse{
 			Errors: []string{
 				err.Error.Error(),
@@ -111,7 +110,7 @@ func RelationshipAccept(c *fiber.Ctx) error {
 	// Verify if user is a part of this relationship
 	currentUserID := c.Locals("USER_ID").(uint)
 
-	if r.UserA != currentUserID && r.UserB != currentUserID {
+	if (r.UserA != currentUserID && r.Status == models.RequestedFromB) || (r.UserB != currentUserID && r.Status == models.RequestedFromA) {
 		return c.Status(400).JSON(&types.ErrorResponse{
 			Errors: []string{
 				"Relationship with specified ID does not exist.",
@@ -119,7 +118,7 @@ func RelationshipAccept(c *fiber.Ctx) error {
 		})
 	}
 
-	if err := database.DB.Model(&models.Relationship{}).Where("id = ?", rid).Update("status", models.Friends); err != nil {
+	if err := database.DB.Model(&models.Relationship{}).Where("id = ?", rid).Update("status", models.Friends); err.Error != nil {
 		return c.Status(400).JSON(&types.ErrorResponse{
 			Errors: []string{
 				err.Error.Error(),
@@ -135,7 +134,7 @@ func RelationshipDecline(c *fiber.Ctx) error {
 
 	r := &models.Relationship{}
 
-	if err := models.FindRelationship(r, "id = ?", rid); err != nil {
+	if err := models.FindRelationship(r, "id = ?", rid); err.Error != nil {
 		return c.Status(400).JSON(&types.ErrorResponse{
 			Errors: []string{
 				err.Error.Error(),
@@ -154,7 +153,7 @@ func RelationshipDecline(c *fiber.Ctx) error {
 		})
 	}
 
-	if err := models.DeleteRelationship(r); err != nil {
+	if err := models.DeleteRelationship(r); err.Error != nil {
 		return c.Status(400).JSON(&types.ErrorResponse{
 			Errors: []string{
 				err.Error.Error(),

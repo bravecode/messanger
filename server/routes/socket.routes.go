@@ -8,13 +8,12 @@ import (
 )
 
 func SocketRoutes(app *fiber.App) {
-	users := map[string]string{}
+	Users := map[string]string{}
 
 	app.Get("/ws/:userID", ikisocket.New(func(kws *ikisocket.Websocket) {
-		// Note: this should be extracted from JWT token because any user can pick any userid
 		// Connect userID & socketID
-		userID := kws.Params("userID")
-		users[userID] = kws.UUID
+		userID := kws.Locals("USER_ID").(string)
+		Users[userID] = kws.UUID
 
 		// Store ID in session
 		kws.SetAttribute("uid", userID)
