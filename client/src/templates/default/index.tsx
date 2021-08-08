@@ -23,6 +23,7 @@ const TemplateDefault: React.FC = () => {
             dispatch(getProfileRequest());
         }
 
+        // Estabilish websockets connection
         if (user !== undefined && localStorage.getItem('token')) {
             dispatch(connectRequest());
         }
@@ -36,7 +37,7 @@ const TemplateDefault: React.FC = () => {
         );
     }
 
-    if (user === undefined && !localStorage.getItem('token')) {
+    if (user === undefined || !localStorage.getItem('token')) {
         return <Redirect to="/auth/login" />
     }
 

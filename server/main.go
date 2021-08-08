@@ -43,8 +43,10 @@ func main() {
 	app.Get("/swagger/*", swagger.Handler)
 
 	routes.AuthRoutes(app)
-	routes.SocketRoutes(app)
 	routes.RelationshipRoutes(app)
+
+	// Note: This needs to be last, because of "Upgrade needed" error message
+	routes.SocketRoutes(app)
 
 	app.Listen(":8000")
 }

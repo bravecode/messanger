@@ -122,6 +122,34 @@
                     }
                 }
             }
+        },
+        "/relationship": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Relationship"
+                ],
+                "summary": "Get all relationships for signed in user.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/types.RelationshipResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -193,6 +221,49 @@
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "types.RelationshipResponse": {
+            "type": "object",
+            "required": [
+                "friends",
+                "incoming_requests",
+                "outgoing_requests"
+            ],
+            "properties": {
+                "friends": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.RelationshipResponseItem"
+                    }
+                },
+                "incoming_requests": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.RelationshipResponseItem"
+                    }
+                },
+                "outgoing_requests": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.RelationshipResponseItem"
+                    }
+                }
+            }
+        },
+        "types.RelationshipResponseItem": {
+            "type": "object",
+            "required": [
+                "id",
+                "user_id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },

@@ -12,6 +12,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// List Relationships
+// @Summary Get all relationships for signed in user.
+// @Tags Relationship
+// @Produce json
+// @Success 200 {array} types.RelationshipResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Router /relationship [get]
 func RelationshipList(c *fiber.Ctx) error {
 	currentUserID := c.Locals("USER_ID").(uint)
 
@@ -25,7 +32,36 @@ func RelationshipList(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(200).JSON(r)
+	result := &types.RelationshipResponse{
+		Friends:          []types.RelationshipResponseItem{},
+		IncomingRequests: []types.RelationshipResponseItem{},
+		OutgoingRequests: []types.RelationshipResponseItem{},
+	}
+
+	for _, relationship := range r {
+		if relationship.Status == models.Friends {
+			result.Friends = append(result.Friends, types.RelationshipResponseItem{
+				ID:     relationship.ID,
+				UserID: getOtherUserID(&relationship, currentUserID),
+			})
+		}
+
+		if relationship.Status == models.RequestedFromA && relationship.UserA == currentUserID {
+			result.OutgoingRequests = append(result.OutgoingRequests, types.RelationshipResponseItem{
+				ID:     relationship.ID,
+				UserID: getOtherUserID(&relationship, currentUserID),
+			})
+		}
+
+		if relationship.Status == models.RequestedFromB && relationship.UserB == currentUserID {
+			result.IncomingRequests = append(result.IncomingRequests, types.RelationshipResponseItem{
+				ID:     relationship.ID,
+				UserID: getOtherUserID(&relationship, currentUserID),
+			})
+		}
+	}
+
+	return c.Status(200).JSON(result)
 }
 
 func RelationshipInvite(c *fiber.Ctx) error {
@@ -90,10 +126,9 @@ func RelationshipInvite(c *fiber.Ctx) error {
 
 	ikisocket.EmitTo(Users[b.To], []byte("New Invite for you!"))
 
-	return c.JSON(&types.RelationshipResponse{
-		UserA:  r.UserA,
-		UserB:  r.UserB,
-		Status: r.Status,
+	return c.JSON(&types.RelationshipResponseItem{
+		ID:     r.ID,
+		UserID: getOtherUserID(r, currentUserID),
 	})
 }
 
@@ -170,4 +205,17 @@ func RelationshipDecline(c *fiber.Ctx) error {
 	ikisocket.EmitToList([]string{Users[r.UserA], Users[r.UserB]}, []byte("Invite Declined!"))
 
 	return c.SendStatus(200)
+}
+
+// Helpers
+func getOtherUserID(value *models.Relationship, currentUserID uint) uint {
+	var otherUserID uint
+
+	if value.UserA == currentUserID {
+		otherUserID = value.UserB
+	} else {
+		otherUserID = value.UserA
+	}
+
+	return otherUserID
 }
