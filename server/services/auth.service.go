@@ -1,7 +1,8 @@
 package services
 
 import (
-	"errors"
+	"fmt"
+	"messanger/database"
 	"messanger/models"
 	"messanger/types"
 	"messanger/utils/auth"
@@ -9,8 +10,8 @@ import (
 
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gomodule/redigo/redis"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 // Login
@@ -41,11 +42,12 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 
-	u := &types.UserResponse{}
+	uid, err := redis.Ints(database.Conn.Do(
+		"SMEMBERS",
+		fmt.Sprintf("users:email:%s", b.Email),
+	))
 
-	err := models.FindUserByEmail(u, b.Email).Error
-
-	if errors.Is(err, gorm.ErrRecordNotFound) {
+	if err != nil || len(uid) != 1 {
 		return c.Status(404).JSON(&types.ErrorResponse{
 			Errors: []string{
 				"Invalid email or password",
@@ -53,7 +55,12 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 
-	if err := verifyPassword(u.Password, b.Password); err != nil {
+	u, err := redis.Values(database.Conn.Do(
+		"HGETALL",
+		fmt.Sprintf("users:%d", uid[0]),
+	))
+
+	if err != nil {
 		return c.Status(404).JSON(&types.ErrorResponse{
 			Errors: []string{
 				"Invalid email or password",
@@ -61,12 +68,35 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(&types.AuthResponse{
-		User: u,
+	var user models.User
+	err = redis.ScanStruct(u, &user)
+
+	if err != nil {
+		return c.Status(404).JSON(&types.ErrorResponse{
+			Errors: []string{
+				"Invalid email or password",
+			},
+		})
+	}
+
+	if err := verifyPassword(user.Password, b.Password); err != nil {
+		return c.Status(404).JSON(&types.ErrorResponse{
+			Errors: []string{
+				"Invalid email or password",
+			},
+		})
+	}
+
+	return c.Status(200).JSON(&types.AuthResponse{
 		Auth: &types.AccessResponse{
 			Token: auth.EncodeToken(&auth.TokenPayload{
-				ID: u.ID,
+				ID: user.ID,
 			}),
+		},
+		User: &types.UserResponse{
+			ID:       user.ID,
+			Username: user.Username,
+			Email:    user.Email,
 		},
 	})
 }
@@ -99,40 +129,89 @@ func Register(c *fiber.Ctx) error {
 		})
 	}
 
-	err := models.FindUserByEmail(&struct{ ID string }{}, b.Email).Error
+	// Check if user already exists
+	res, err := redis.Int(database.Conn.Do(
+		"SCARD",
+		fmt.Sprintf("users:email:%s", b.Email),
+	))
 
-	if !errors.Is(err, gorm.ErrRecordNotFound) {
+	if err != nil || res != 0 {
 		return c.Status(400).JSON(&types.ErrorResponse{
 			Errors: []string{
-				"User with specified email already exists.",
+				"User already exists.",
 			},
 		})
 	}
 
-	u := &models.User{
-		Username: b.Username,
-		Password: hashPassword(b.Password),
-		Email:    b.Email,
+	// Get next user ID
+	index, err := redis.Int(database.Conn.Do(
+		"GET",
+		"users:index",
+	))
+
+	if err != nil || index == 0 {
+		index = 0
+
+		database.Conn.Do(
+			"SET",
+			"users:index",
+			index,
+		)
 	}
 
-	if err := models.CreateUser(u); err.Error != nil {
+	uindex := uint(index)
+
+	// Create User
+	user, err := database.Conn.Do(
+		"HMSET",
+		fmt.Sprintf("users:%d", index),
+		"ID",
+		uindex,
+		"Email",
+		b.Email,
+		"Username",
+		b.Username,
+		"Password",
+		hashPassword(b.Password),
+	)
+
+	if err != nil || user == nil {
 		return c.Status(400).JSON(&types.ErrorResponse{
 			Errors: []string{
-				err.Error.Error(),
+				"Something went wrong. Try again later.",
 			},
 		})
 	}
 
-	return c.JSON(&types.AuthResponse{
-		User: &types.UserResponse{
-			ID:       u.ID,
-			Username: u.Username,
-			Email:    u.Email,
-		},
+	sadd, err := database.Conn.Do(
+		"SADD",
+		fmt.Sprintf("users:email:%s", b.Email),
+		uindex,
+	)
+
+	if err != nil || sadd == nil {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				"Something went wrong. Try again later.",
+			},
+		})
+	}
+
+	database.Conn.Do(
+		"INCR",
+		"users:index",
+	)
+
+	return c.Status(200).JSON(&types.AuthResponse{
 		Auth: &types.AccessResponse{
 			Token: auth.EncodeToken(&auth.TokenPayload{
-				ID: u.ID,
+				ID: uindex,
 			}),
+		},
+		User: &types.UserResponse{
+			ID:       uindex,
+			Username: b.Username,
+			Email:    b.Email,
 		},
 	})
 }
@@ -146,19 +225,39 @@ func Register(c *fiber.Ctx) error {
 // @Router /auth/profile [get]
 // @Security ApiKeyAuth
 func Profile(c *fiber.Ctx) error {
-	u := &types.UserResponse{}
+	uid := c.Locals("USER_ID").(uint)
 
-	err := models.FindUser(u, "id = ?", c.Locals("USER_ID").(uint)).Error
+	u, err := redis.Values(
+		database.Conn.Do(
+			"HGETALL",
+			fmt.Sprintf("users:%d", uid),
+		),
+	)
 
 	if err != nil {
 		return c.Status(400).JSON(&types.ErrorResponse{
 			Errors: []string{
-				err.Error(),
+				"Something went wrong.",
 			},
 		})
 	}
 
-	return c.JSON(u)
+	var user models.User
+	err = redis.ScanStruct(u, &user)
+
+	if err != nil {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				"Something went wrong.",
+			},
+		})
+	}
+
+	return c.Status(200).JSON(&types.UserResponse{
+		ID:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
+	})
 }
 
 // Helpers

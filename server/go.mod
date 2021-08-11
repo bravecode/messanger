@@ -17,6 +17,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.16.0
 	github.com/gofiber/websocket v0.5.1 // indirect
 	github.com/gofiber/websocket/v2 v2.0.7 // indirect
+	github.com/gomodule/redigo v1.8.5 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/joho/godotenv v1.3.0
 	github.com/klauspost/compress v1.13.3 // indirect

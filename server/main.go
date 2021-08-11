@@ -3,7 +3,6 @@ package main
 import (
 	"messanger/database"
 	_ "messanger/docs"
-	"messanger/models"
 	"messanger/routes"
 
 	swagger "github.com/arsmn/fiber-swagger/v2"
@@ -28,10 +27,10 @@ func main() {
 		panic("Could not load .env file")
 	}
 
+	// Configure Database - Redis
 	database.Connect()
-	database.Migrate(&models.User{})
-	database.Migrate(&models.Relationship{})
 
+	// Create Application Instnace
 	app := fiber.New()
 
 	// CORS
@@ -44,9 +43,6 @@ func main() {
 
 	routes.AuthRoutes(app)
 	routes.RelationshipRoutes(app)
-
-	// Note: This needs to be last, because of "Upgrade needed" error message
-	routes.SocketRoutes(app)
 
 	app.Listen(":8000")
 }
