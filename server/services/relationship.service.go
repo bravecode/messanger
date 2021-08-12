@@ -2,7 +2,11 @@ package services
 
 import (
 	"messanger/models"
+	"messanger/types"
+	validatorUtils "messanger/utils/validator"
+	"strconv"
 
+	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -14,197 +18,238 @@ import (
 // @Failure 400 {object} types.ErrorResponse
 // @Router /relationship [get]
 func RelationshipList(c *fiber.Ctx) error {
-	// currentUserID := c.Locals("USER_ID").(uint)
+	currentUserID := c.Locals("USER_ID").(uint)
 
-	// var r []models.Relationship
+	relationships, err := models.FindRelationshipsForUser(currentUserID)
 
-	// if err := database.DB.Find(&r, "user_a = ? OR user_b = ?", currentUserID, currentUserID); err.Error != nil {
-	// 	return c.Status(400).JSON(&types.ErrorResponse{
-	// 		Errors: []string{
-	// 			err.Error.Error(),
-	// 		},
-	// 	})
-	// }
+	if err != nil {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				err.Error(),
+			},
+		})
+	}
 
-	// result := &types.RelationshipResponse{
-	// 	Friends:          []types.RelationshipResponseItem{},
-	// 	IncomingRequests: []types.RelationshipResponseItem{},
-	// 	OutgoingRequests: []types.RelationshipResponseItem{},
-	// }
+	result := &types.RelationshipResponse{
+		Friends:          []types.RelationshipResponseItem{},
+		IncomingRequests: []types.RelationshipResponseItem{},
+		OutgoingRequests: []types.RelationshipResponseItem{},
+	}
 
-	// for _, relationship := range r {
-	// 	if relationship.Status == models.Friends {
-	// 		result.Friends = append(result.Friends, types.RelationshipResponseItem{
-	// 			ID:     relationship.ID,
-	// 			UserID: getOtherUserID(&relationship, currentUserID),
-	// 		})
-	// 	}
+	for _, rid := range relationships {
+		r, err := models.FindRelationshipByID(rid)
 
-	// 	if relationship.Status == models.RequestedFromA && relationship.UserA == currentUserID {
-	// 		result.OutgoingRequests = append(result.OutgoingRequests, types.RelationshipResponseItem{
-	// 			ID:     relationship.ID,
-	// 			UserID: getOtherUserID(&relationship, currentUserID),
-	// 		})
-	// 	}
+		if err == nil {
+			if r.Status == models.Friends {
+				result.Friends = append(result.Friends, types.RelationshipResponseItem{
+					ID:     r.ID,
+					UserID: getOtherUserID(r, currentUserID),
+				})
+			}
 
-	// 	if relationship.Status == models.RequestedFromB && relationship.UserB == currentUserID {
-	// 		result.IncomingRequests = append(result.IncomingRequests, types.RelationshipResponseItem{
-	// 			ID:     relationship.ID,
-	// 			UserID: getOtherUserID(&relationship, currentUserID),
-	// 		})
-	// 	}
-	// }
+			if r.Status == models.RequestedFromA && r.UserA == currentUserID {
+				result.OutgoingRequests = append(result.OutgoingRequests, types.RelationshipResponseItem{
+					ID:     r.ID,
+					UserID: getOtherUserID(r, currentUserID),
+				})
+			}
 
-	// return c.Status(200).JSON(result)
+			if r.Status == models.RequestedFromB && r.UserB == currentUserID {
+				result.IncomingRequests = append(result.IncomingRequests, types.RelationshipResponseItem{
+					ID:     r.ID,
+					UserID: getOtherUserID(r, currentUserID),
+				})
+			}
+		}
+	}
 
-	return c.SendStatus(200)
+	return c.Status(200).JSON(result)
 }
 
 func RelationshipInvite(c *fiber.Ctx) error {
-	// b := new(types.RelationshipInviteDTO)
+	b := new(types.RelationshipInviteDTO)
 
-	// if err := c.BodyParser(b); err != nil {
-	// 	return c.Status(400).JSON(&types.ErrorResponse{
-	// 		Errors: []string{
-	// 			err.Error(),
-	// 		},
-	// 	})
-	// }
+	if err := c.BodyParser(b); err != nil {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				err.Error(),
+			},
+		})
+	}
 
-	// v := validator.New()
+	v := validator.New()
 
-	// if err := v.Struct(b); err != nil {
-	// 	return c.Status(400).JSON(&types.ErrorResponse{
-	// 		Errors: validatorUtils.FormatValidatorErrors(err),
-	// 	})
-	// }
+	if err := v.Struct(b); err != nil {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: validatorUtils.FormatValidatorErrors(err),
+		})
+	}
 
-	// currentUserID := c.Locals("USER_ID").(uint)
+	currentUserID := c.Locals("USER_ID").(uint)
 
-	// // Check if user exist (may be solved by relations)
-	// vr := &models.Relationship{}
-	// r := &models.Relationship{}
+	// Validate if user Exists
+	_, err := models.FindUserByID(b.To)
 
-	// // TODO: Clean this code, it's ugly
-	// if currentUserID < b.To {
-	// 	r.UserA = currentUserID
-	// 	r.UserB = b.To
-	// 	r.Status = models.RequestedFromA
+	if err != nil {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				err.Error(),
+			},
+		})
+	}
 
-	// 	if err := models.FindRelationship(vr, "user_a = ? AND user_b = ?", currentUserID, b.To); err.Error == nil {
-	// 		return c.Status(400).JSON(&types.ErrorResponse{
-	// 			Errors: []string{
-	// 				"Relationship already exists.",
-	// 			},
-	// 		})
-	// 	}
-	// } else {
-	// 	r.UserA = b.To
-	// 	r.UserB = currentUserID
-	// 	r.Status = models.RequestedFromB
+	index := models.GetNextRelationshipID()
 
-	// 	if err := models.FindRelationship(vr, "user_a = ? AND user_b = ?", b.To, currentUserID); err.Error == nil {
-	// 		return c.Status(400).JSON(&types.ErrorResponse{
-	// 			Errors: []string{
-	// 				"Relationship already exists.",
-	// 			},
-	// 		})
-	// 	}
-	// }
+	r := &models.Relationship{
+		ID:     index,
+		UserA:  currentUserID,
+		UserB:  b.To,
+		Status: models.RequestedFromA,
+	}
 
-	// if err := models.CreateRelationship(r); err.Error != nil {
-	// 	return c.Status(400).JSON(&types.ErrorResponse{
-	// 		Errors: []string{
-	// 			err.Error.Error(),
-	// 		},
-	// 	})
-	// }
+	// Check if Unique
+	err = models.IsRelationshipUnique(r.UserA, r.UserB)
 
+	if err != nil {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				err.Error(),
+			},
+		})
+	}
+
+	// Create Relationship
+	err = models.CreateRelationship(r)
+
+	if err != nil {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				err.Error(),
+			},
+		})
+	}
+
+	models.IncreaseNextRelationshipID()
+
+	// Emit Socket Message
 	// ikisocket.EmitTo(Users[b.To], []byte("New Invite for you!"))
 
-	// return c.JSON(&types.RelationshipResponseItem{
-	// 	ID:     r.ID,
-	// 	UserID: getOtherUserID(r, currentUserID),
-	// })
-
-	return c.SendStatus(200)
+	return c.JSON(&types.RelationshipResponseItem{
+		ID:     r.ID,
+		UserID: getOtherUserID(r, currentUserID),
+	})
 }
 
-// TODO: Definitely there is more clear way to do this
 func RelationshipAccept(c *fiber.Ctx) error {
-	// rid := c.Params("ID")
+	id, err := strconv.ParseUint(c.Params("ID"), 10, 32)
 
-	// r := &models.Relationship{}
+	if err != nil {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				"Something went wrong. Try again later.",
+			},
+		})
+	}
 
-	// if err := models.FindRelationship(r, "id = ?", rid); err.Error != nil {
-	// 	return c.Status(400).JSON(&types.ErrorResponse{
-	// 		Errors: []string{
-	// 			err.Error.Error(),
-	// 		},
-	// 	})
-	// }
+	r, err := models.FindRelationshipByID(uint(id))
 
-	// // Verify if user is a part of this relationship
-	// currentUserID := c.Locals("USER_ID").(uint)
+	if err != nil {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				err.Error(),
+			},
+		})
+	}
 
-	// if (r.UserA != currentUserID && r.Status == models.RequestedFromB) || (r.UserB != currentUserID && r.Status == models.RequestedFromA) {
-	// 	return c.Status(400).JSON(&types.ErrorResponse{
-	// 		Errors: []string{
-	// 			"Relationship with specified ID does not exist.",
-	// 		},
-	// 	})
-	// }
+	// Is user part of the relationship?
+	currentUserID := c.Locals("USER_ID").(uint)
 
-	// if err := database.DB.Model(&models.Relationship{}).Where("id = ?", rid).Update("status", models.Friends); err.Error != nil {
-	// 	return c.Status(400).JSON(&types.ErrorResponse{
-	// 		Errors: []string{
-	// 			err.Error.Error(),
-	// 		},
-	// 	})
-	// }
+	if r.Status == models.RequestedFromA && r.UserA == currentUserID {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				"You are not able to accept this request.",
+			},
+		})
+	}
 
+	if r.Status == models.RequestedFromB && r.UserB == currentUserID {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				"You are not able to accept this request.",
+			},
+		})
+	}
+
+	if r.UserA != currentUserID && r.UserB != currentUserID {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				"You are not able to accept this request.",
+			},
+		})
+	}
+
+	// Update Relationship
+	err = models.UpdateRelationshipStatus(uint(id), models.Friends)
+
+	if err != nil {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				err.Error(),
+			},
+		})
+	}
+
+	// Emit Socket Message
 	// ikisocket.EmitToList([]string{Users[r.UserA], Users[r.UserB]}, []byte("Invite Accepted!"))
-
-	// return c.SendStatus(200)
 
 	return c.SendStatus(200)
 }
 
 func RelationshipDecline(c *fiber.Ctx) error {
-	// rid := c.Params("ID")
+	id, err := strconv.ParseUint(c.Params("ID"), 10, 32)
 
-	// r := &models.Relationship{}
+	if err != nil {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				"Something went wrong. Try again later.",
+			},
+		})
+	}
 
-	// if err := models.FindRelationship(r, "id = ?", rid); err.Error != nil {
-	// 	return c.Status(400).JSON(&types.ErrorResponse{
-	// 		Errors: []string{
-	// 			err.Error.Error(),
-	// 		},
-	// 	})
-	// }
+	r, err := models.FindRelationshipByID(uint(id))
 
-	// // Verify if user is a part of this relationship
-	// currentUserID := c.Locals("USER_ID").(uint)
+	if err != nil {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				err.Error(),
+			},
+		})
+	}
 
-	// if r.UserA != currentUserID && r.UserB != currentUserID {
-	// 	return c.Status(400).JSON(&types.ErrorResponse{
-	// 		Errors: []string{
-	// 			"Relationship with specified ID does not exist.",
-	// 		},
-	// 	})
-	// }
+	// Is user part of the relationship?
+	currentUserID := c.Locals("USER_ID").(uint)
 
-	// if err := models.DeleteRelationship(r); err.Error != nil {
-	// 	return c.Status(400).JSON(&types.ErrorResponse{
-	// 		Errors: []string{
-	// 			err.Error.Error(),
-	// 		},
-	// 	})
-	// }
+	if r.UserA != currentUserID && r.UserB != currentUserID {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				"You are not able to accept this request.",
+			},
+		})
+	}
 
-	// ikisocket.EmitToList([]string{Users[r.UserA], Users[r.UserB]}, []byte("Invite Declined!"))
+	// Update Relationship
+	err = models.DeleteRelationship(uint(id))
 
-	// return c.SendStatus(200)
+	if err != nil {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				err.Error(),
+			},
+		})
+	}
+
+	// Emit Socket Message
+	// ikisocket.EmitToList([]string{Users[r.UserA], Users[r.UserB]}, []byte("Invite Accepted!"))
 
 	return c.SendStatus(200)
 }
