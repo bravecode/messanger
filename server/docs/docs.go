@@ -271,14 +271,21 @@ var doc = `{
             "type": "object",
             "required": [
                 "id",
-                "user_id"
+                "user_id",
+                "username"
             ],
             "properties": {
                 "id": {
                     "type": "integer"
                 },
+                "online": {
+                    "type": "boolean"
+                },
                 "user_id": {
                     "type": "integer"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },

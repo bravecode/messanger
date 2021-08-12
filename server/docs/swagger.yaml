@@ -70,11 +70,16 @@ definitions:
     properties:
       id:
         type: integer
+      online:
+        type: boolean
       user_id:
         type: integer
+      username:
+        type: string
     required:
     - id
     - user_id
+    - username
     type: object
   types.UserResponse:
     properties:

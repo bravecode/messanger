@@ -12,7 +12,7 @@ const Friends: React.FC = () => {
         dispatch(getRelationshipsRequest())
     }, []);
 
-    const { friends, pending } = useSelector((store: IStore) => store.relationship);
+    const { friends, outgoingRequests, incomingRequests, pending } = useSelector((store: IStore) => store.relationship);
 
     return (
         <div className="grid gap-4">
@@ -22,10 +22,42 @@ const Friends: React.FC = () => {
                         <UserAvatar />
                         <div className="px-4">
                             <div className="text-black text-sm text-bold mb-0.5">
-                                Krzysztof Szymański
+                                { friend.userName }
                             </div>
                             <div className="text-gray-500 text-xs">
-                                { friend.userID }
+                                { friend.online ? 'Online' : 'Offline' }
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+
+            {
+                incomingRequests.map((friend) =>
+                    <div className="flex items-center">
+                        <UserAvatar />
+                        <div className="px-4">
+                            <div className="text-black text-sm text-bold mb-0.5">
+                                { friend.userName }
+                            </div>
+                            <div className="text-gray-500 text-xs">
+                                Incoming Request
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+
+            {
+                outgoingRequests.map((friend) =>
+                    <div className="flex items-center">
+                        <UserAvatar />
+                        <div className="px-4">
+                            <div className="text-black text-sm text-bold mb-0.5">
+                                { friend.userName }
+                            </div>
+                            <div className="text-gray-500 text-xs">
+                                Outgoing Request
                             </div>
                         </div>
                     </div>

@@ -12,25 +12,33 @@ function* handleGetRelationshipsRequest(): SagaIterator {
     try {
         const { data }: AxiosResponse<TypesRelationshipResponse> = yield call(getRelationships);
 
+        console.log(data);
+
         // Format Data
         const friends: IRelationship[] = data.friends.map((r): IRelationship => {
             return {
                 ID: r.id,
-                userID: r.user_id
+                userID: r.user_id,
+                online: r.online ?? false,
+                userName: r.username
             }
         });
 
         const incomingRequests: IRelationship[] = data.incoming_requests.map((r): IRelationship => {
             return {
                 ID: r.id,
-                userID: r.user_id
+                userID: r.user_id,
+                online: r.online ?? false,
+                userName: r.username
             }
         });
 
         const outgoingRequests: IRelationship[] = data.outgoing_requests.map((r): IRelationship => {
             return {
                 ID: r.id,
-                userID: r.user_id
+                userID: r.user_id,
+                online: r.online ?? false,
+                userName: r.username
             }
         });
         

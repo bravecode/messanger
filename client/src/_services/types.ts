@@ -41,7 +41,9 @@ export interface TypesRelationshipResponse {
 
 export interface TypesRelationshipResponseItem {
   id: number;
+  online?: boolean;
   user_id: number;
+  username: string;
 }
 
 export interface TypesUserResponse {

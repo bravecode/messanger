@@ -15,6 +15,8 @@ export interface IRelationshipsGrouped {
 export interface IRelationship {
     ID: number;
     userID: number;
+    userName: string;
+    online: boolean;
 }
 
 const defaultState: IRelationshipState = {

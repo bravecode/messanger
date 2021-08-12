@@ -6,6 +6,7 @@ import (
 	validatorUtils "messanger/utils/validator"
 	"strconv"
 
+	"github.com/antoniodipinto/ikisocket"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -40,26 +41,30 @@ func RelationshipList(c *fiber.Ctx) error {
 		r, err := models.FindRelationshipByID(rid)
 
 		if err == nil {
+			otherUserID := getOtherUserID(r, currentUserID)
+			otherUser, _ := models.FindUserByID(otherUserID)
+
 			if r.Status == models.Friends {
 				result.Friends = append(result.Friends, types.RelationshipResponseItem{
-					ID:     r.ID,
-					UserID: getOtherUserID(r, currentUserID),
+					ID:       r.ID,
+					UserID:   otherUser.ID,
+					Username: otherUser.Username,
 				})
 			}
 
-			if r.Status == models.RequestedFromA && r.UserA == currentUserID {
+			if (r.Status == models.RequestedFromA && r.UserA == currentUserID) || (r.Status == models.RequestedFromB && r.UserB == currentUserID) {
 				result.OutgoingRequests = append(result.OutgoingRequests, types.RelationshipResponseItem{
-					ID:     r.ID,
-					UserID: getOtherUserID(r, currentUserID),
+					ID:       r.ID,
+					UserID:   otherUser.ID,
+					Username: otherUser.Username,
 				})
 			}
 
-			if r.Status == models.RequestedFromB && r.UserB == currentUserID {
-				result.IncomingRequests = append(result.IncomingRequests, types.RelationshipResponseItem{
-					ID:     r.ID,
-					UserID: getOtherUserID(r, currentUserID),
-				})
-			}
+			result.IncomingRequests = append(result.IncomingRequests, types.RelationshipResponseItem{
+				ID:       r.ID,
+				UserID:   otherUser.ID,
+				Username: otherUser.Username,
+			})
 		}
 	}
 
@@ -88,7 +93,7 @@ func RelationshipInvite(c *fiber.Ctx) error {
 	currentUserID := c.Locals("USER_ID").(uint)
 
 	// Validate if user Exists
-	_, err := models.FindUserByID(b.To)
+	otherUser, err := models.FindUserByID(b.To)
 
 	if err != nil {
 		return c.Status(400).JSON(&types.ErrorResponse{
@@ -132,11 +137,12 @@ func RelationshipInvite(c *fiber.Ctx) error {
 	models.IncreaseNextRelationshipID()
 
 	// Emit Socket Message
-	// ikisocket.EmitTo(Users[b.To], []byte("New Invite for you!"))
+	ikisocket.EmitToList([]string{Users[r.UserA], Users[r.UserB]}, []byte("relationships:refresh"))
 
 	return c.JSON(&types.RelationshipResponseItem{
-		ID:     r.ID,
-		UserID: getOtherUserID(r, currentUserID),
+		ID:       r.ID,
+		UserID:   otherUser.ID,
+		Username: otherUser.Username,
 	})
 }
 
@@ -200,7 +206,7 @@ func RelationshipAccept(c *fiber.Ctx) error {
 	}
 
 	// Emit Socket Message
-	// ikisocket.EmitToList([]string{Users[r.UserA], Users[r.UserB]}, []byte("Invite Accepted!"))
+	ikisocket.EmitToList([]string{Users[r.UserA], Users[r.UserB]}, []byte("relationships:refresh"))
 
 	return c.SendStatus(200)
 }
@@ -249,7 +255,7 @@ func RelationshipDecline(c *fiber.Ctx) error {
 	}
 
 	// Emit Socket Message
-	// ikisocket.EmitToList([]string{Users[r.UserA], Users[r.UserB]}, []byte("Invite Accepted!"))
+	ikisocket.EmitToList([]string{Users[r.UserA], Users[r.UserB]}, []byte("relationships:refresh"))
 
 	return c.SendStatus(200)
 }
