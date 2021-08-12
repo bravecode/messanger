@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"messanger/database"
 
@@ -14,82 +15,122 @@ type User struct {
 	Password string
 }
 
-func CreateUser(user *User) error {
-	i, err := redis.Uint64(database.Conn.Do(
+func GetNextUserID() uint {
+	index, err := redis.Int(database.Conn.Do(
 		"GET",
 		"users:index",
 	))
 
-	if err != nil {
-		if _, err := database.Conn.Do("SET", "users:index", 0); err != nil {
-			return err
-		}
+	if err != nil || index == 0 {
+		index = 0
 
-		i = 0
+		database.Conn.Do(
+			"SET",
+			"users:index",
+			index,
+		)
 	}
 
-	// Create Users HSET
-	if _, err := database.Conn.Do(
-		"HSET",
-		fmt.Sprintf("users:%d", i),
-		"ID",
-		i,
-		"username",
-		user.Username,
-		"email",
-		user.Email,
-		"password",
-		user.Password,
-	); err != nil {
-		return err
-	}
+	return uint(index)
+}
 
-	// Create Set for User's Email
-	if _, err := database.Conn.Do(
-		"SADD",
-		fmt.Sprintf("users:email:%s", user.Email),
-		i,
-	); err != nil {
-		return err
-	}
-
-	// Increase Index for the next user
-	if _, err := database.Conn.Do(
+func IncreaseNextUserID() {
+	database.Conn.Do(
 		"INCR",
 		"users:index",
-	); err != nil {
-		return err
+	)
+}
+
+func CreateUser(values *User) error {
+	hmset, err := database.Conn.Do(
+		"HMSET",
+		fmt.Sprintf("users:%d", values.ID),
+		"ID",
+		values.ID,
+		"Email",
+		values.Email,
+		"Username",
+		values.Username,
+		"Password",
+		values.Password,
+	)
+
+	if err != nil || hmset == nil {
+		return errors.New("something went wrong. Try again later")
 	}
 
-	user = &User{
-		ID:       uint(i),
-		Username: user.Username,
-		Email:    user.Email,
-		Password: user.Password,
+	sadd, err := database.Conn.Do(
+		"SADD",
+		fmt.Sprintf("users:email:%s", values.Email),
+		values.ID,
+	)
+
+	if err != nil || sadd == nil {
+		return errors.New("something went wrong. Try again later")
 	}
 
 	return nil
 }
 
-func FindUserByEmail(email string) (User, error) {
-	var user User
+func IsUserEmailUnique(email string) error {
+	res, err := redis.Int(database.Conn.Do(
+		"SCARD",
+		fmt.Sprintf("users:email:%s", email),
+	))
 
-	// Get ID
-	uid, err := database.Conn.Do("SMEMBERS", fmt.Sprintf("users:email:%s", email))
-
-	if err != nil {
-		return user, err
+	if err != nil || res != 0 {
+		return errors.New("user already exists")
 	}
 
-	// Get Record
-	if result, err := redis.Values(database.Conn.Do("HGETALL", uid)); err != nil {
-		return user, err
-	} else {
-		err = redis.ScanStruct(result, &user)
+	return nil
+}
 
-		if err != nil {
-			return user, err
-		}
+func FindUserByEmail(email string) (*User, error) {
+	uid, err := redis.Ints(database.Conn.Do(
+		"SMEMBERS",
+		fmt.Sprintf("users:email:%s", email),
+	))
+
+	if err != nil || len(uid) != 1 {
+		return nil, errors.New("invalid email or password")
+	}
+
+	u, err := redis.Values(database.Conn.Do(
+		"HGETALL",
+		fmt.Sprintf("users:%d", uid[0]),
+	))
+
+	if err != nil {
+		return nil, errors.New("invalid email or password")
+	}
+
+	user := &User{}
+	err = redis.ScanStruct(u, user)
+
+	if err != nil {
+		return nil, errors.New("invalid email or password")
+	}
+
+	return user, nil
+}
+
+func FindUserByID(id uint) (*User, error) {
+	u, err := redis.Values(
+		database.Conn.Do(
+			"HGETALL",
+			fmt.Sprintf("users:%d", id),
+		),
+	)
+
+	if err != nil {
+		return nil, errors.New("something went wrong")
+	}
+
+	user := &User{}
+	err = redis.ScanStruct(u, user)
+
+	if err != nil {
+		return nil, errors.New("something went wrong")
 	}
 
 	return user, nil
