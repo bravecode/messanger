@@ -43,6 +43,7 @@ func main() {
 
 	routes.AuthRoutes(app)
 	routes.RelationshipRoutes(app)
+	routes.UserRoutes(app)
 
 	app.Listen(":8000")
 }
