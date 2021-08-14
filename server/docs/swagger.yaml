@@ -94,6 +94,16 @@ definitions:
     - id
     - username
     type: object
+  types.UserSearchResponse:
+    properties:
+      id:
+        type: integer
+      username:
+        type: string
+    required:
+    - id
+    - username
+    type: object
 host: localhost:8000
 info:
   contact: {}
@@ -191,6 +201,31 @@ paths:
       summary: Get all relationships for signed in user.
       tags:
       - Relationship
+  /users/search:
+    get:
+      parameters:
+      - description: Username query value
+        in: query
+        minLength: 3
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.UserSearchResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Search for users with specified username.
+      tags:
+      - Users
 securityDefinitions:
   ApiKeyAuth:
     in: header

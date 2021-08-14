@@ -9,6 +9,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// Search for a user
+// @Summary Search for users with specified username.
+// @Tags Users
+// @Produce json
+// @Param username query string true "Username query value" minlength(3)
+// @Success 200 {array} types.UserSearchResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Router /users/search [get]
 func SearchUsers(c *fiber.Ctx) error {
 	name := c.Query("username")
 

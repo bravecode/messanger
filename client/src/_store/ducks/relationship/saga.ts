@@ -12,8 +12,6 @@ function* handleGetRelationshipsRequest(): SagaIterator {
     try {
         const { data }: AxiosResponse<TypesRelationshipResponse> = yield call(getRelationships);
 
-        console.log(data);
-
         // Format Data
         const friends: IRelationship[] = data.friends.map((r): IRelationship => {
             return {

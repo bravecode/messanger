@@ -51,3 +51,8 @@ export interface TypesUserResponse {
   id: number;
   username: string;
 }
+
+export interface TypesUserSearchResponse {
+  id: number;
+  username: string;
+}

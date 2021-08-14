@@ -1,6 +1,6 @@
 package types
 
 type UserSearchResponse struct {
-	ID       uint
-	Username string
+	ID       uint   `json:"id" validate:"required"`
+	Username string `json:"username" validate:"required"`
 }

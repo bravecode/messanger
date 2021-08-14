@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { UserAvatar } from '_components/user/UserAvatar';
 import { IStore } from '_store';
 import { getRelationshipsRequest } from '_store/ducks/relationship/actions';
+import { FriendsSearch } from './FriendsSearch';
 
 const Friends: React.FC = () => {
     const dispatch = useDispatch();
@@ -16,6 +17,8 @@ const Friends: React.FC = () => {
 
     return (
         <div className="grid gap-4">
+            <FriendsSearch />
+
             {
                 friends.map((friend) =>
                     <div className="flex items-center">

@@ -5,6 +5,7 @@ import rootSaga from './ducks/rootSaga';
 import auth from './ducks/auth/reducer';
 import socket from './ducks/socket/reducer';
 import relationship from './ducks/relationship/reducer';
+import search from './ducks/search/reducer';
 
 // Middlewares
 import sagaMiddleware from './middlewares/saga';
@@ -14,6 +15,7 @@ const store = configureStore({
         auth,
         socket,
         relationship,
+        search
     },
     middleware: [
         sagaMiddleware
