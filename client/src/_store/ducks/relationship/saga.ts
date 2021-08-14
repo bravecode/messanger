@@ -3,9 +3,9 @@ import { SagaIterator } from "redux-saga";
 import { all, call, fork, put, takeEvery } from "redux-saga/effects";
 import { Action } from '@reduxjs/toolkit';
 
-import { getRelationshipsError, getRelationshipsRequest, getRelationshipsSuccess, inviteError, inviteRequest, inviteSuccess } from "./actions";
+import { acceptError, acceptRequest, acceptSuccess, declineError, declineRequest, declineSuccess, getRelationshipsError, getRelationshipsRequest, getRelationshipsSuccess, inviteError, inviteRequest, inviteSuccess } from "./actions";
 
-import { getRelationships, invite } from "_services/relationship.service";
+import { accept, decline, getRelationships, invite } from "_services/relationship.service";
 import { TypesErrorResponse, TypesRelationshipResponse } from "_services/types";
 import { IRelationship } from "./reducer";
 
@@ -77,6 +77,44 @@ function* handleInviteRequest(action: Action): SagaIterator {
     }
 }
 
+function* handleAcceptRequest(action: Action): SagaIterator {
+    try {
+        if (acceptRequest.match(action)) {
+            const requestID = action.payload;
+
+            yield call(accept, requestID);
+            yield put(acceptSuccess())
+        }
+    } catch (err) {
+        const typed: AxiosError<TypesErrorResponse> = err;
+        
+        if (typed.response?.data.errors) {
+            yield put(acceptError(typed.response.data.errors))  
+        } else {
+            yield put(acceptError(['Unknown error has occured.']))  
+        }
+    }
+}
+
+function* handleDeclineRequest(action: Action): SagaIterator {
+    try {
+        if (declineRequest.match(action)) {
+            const requestID = action.payload;
+
+            yield call(decline, requestID);
+            yield put(declineSuccess())
+        }
+    } catch (err) {
+        const typed: AxiosError<TypesErrorResponse> = err;
+        
+        if (typed.response?.data.errors) {
+            yield put(declineError(typed.response.data.errors))  
+        } else {
+            yield put(declineError(['Unknown error has occured.']))  
+        }
+    }
+}
+
 // Watchers
 function* watchGetRelationshipsRequest() {
     yield takeEvery(getRelationshipsRequest, handleGetRelationshipsRequest);
@@ -86,9 +124,19 @@ function* watchInviteRequest() {
     yield takeEvery(inviteRequest, handleInviteRequest)
 }
 
+function* watchAcceptRequest() {
+    yield takeEvery(acceptRequest, handleAcceptRequest)
+}
+
+function* watchDeclineRequest() {
+    yield takeEvery(declineRequest, handleDeclineRequest)
+}
+
 export default function* relationshipSaga() {
     yield all([
         fork(watchGetRelationshipsRequest),
         fork(watchInviteRequest),
+        fork(watchAcceptRequest),
+        fork(watchDeclineRequest),
     ]);
 }

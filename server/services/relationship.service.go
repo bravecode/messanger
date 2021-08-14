@@ -50,6 +50,8 @@ func RelationshipList(c *fiber.Ctx) error {
 					UserID:   otherUser.ID,
 					Username: otherUser.Username,
 				})
+
+				continue
 			}
 
 			if (r.Status == models.RequestedFromA && r.UserA == currentUserID) || (r.Status == models.RequestedFromB && r.UserB == currentUserID) {
@@ -58,6 +60,8 @@ func RelationshipList(c *fiber.Ctx) error {
 					UserID:   otherUser.ID,
 					Username: otherUser.Username,
 				})
+
+				continue
 			}
 
 			result.IncomingRequests = append(result.IncomingRequests, types.RelationshipResponseItem{
