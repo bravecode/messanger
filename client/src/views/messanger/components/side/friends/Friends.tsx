@@ -14,7 +14,7 @@ const Friends: React.FC = () => {
         dispatch(getRelationshipsRequest())
     }, []);
 
-    const { friends, outgoingRequests, incomingRequests, pending } = useSelector((store: IStore) => store.relationship);
+    const { friends, outgoingRequests, incomingRequests } = useSelector((store: IStore) => store.relationship);
 
     return (
         <div className="grid gap-4">
@@ -22,7 +22,7 @@ const Friends: React.FC = () => {
 
             {
                 friends.map((friend) =>
-                    <div className="flex items-center">
+                    <div key={friend.ID} className="flex items-center">
                         <UserAvatar />
                         <div className="px-4">
                             <div className="text-black text-sm text-bold mb-0.5">
@@ -48,12 +48,12 @@ const Friends: React.FC = () => {
             }
 
             {
-                outgoingRequests.map((friend) =>
-                    <div className="flex items-center">
+                outgoingRequests.map((request) =>
+                    <div key={request.ID} className="flex items-center">
                         <UserAvatar />
                         <div className="px-4">
                             <div className="text-black text-sm text-bold mb-0.5">
-                                { friend.userName }
+                                { request.userName }
                             </div>
                             <div className="text-gray-500 text-xs">
                                 Outgoing Request
