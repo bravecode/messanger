@@ -1,14 +1,16 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { IStore } from '_store';
+import { inviteRequest } from '_store/ducks/relationship/actions';
 import { FriendsSearchResultItem } from './FriendsSearchResultItem';
 
 const FriendsSearchResult: React.FC = () => {
+    const dispatch = useDispatch();
     const { users } = useSelector((store: IStore) => store.search);
 
     const handleInvite = (userID: number) => {
-        console.log('Invite user: ', userID)
+        dispatch(inviteRequest(userID))
     }
     
     return (

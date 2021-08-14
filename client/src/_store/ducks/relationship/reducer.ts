@@ -1,5 +1,5 @@
-import { createReducer } from '@reduxjs/toolkit';
-import { getRelationshipsError, getRelationshipsRequest, getRelationshipsSuccess } from './actions';
+import { createReducer, isAnyOf } from '@reduxjs/toolkit';
+import { acceptError, declineError, getRelationshipsError, getRelationshipsRequest, getRelationshipsSuccess, inviteError } from './actions';
 
 export interface IRelationshipState extends IRelationshipsGrouped {
     pending: boolean;
@@ -38,7 +38,7 @@ export default createReducer(defaultState, (builder) => {
             state.incomingRequests = payload.incomingRequests;
             state.outgoingRequests = payload.outgoingRequests;
         })
-        .addCase(getRelationshipsError, (state, { payload }) => {
+        .addMatcher(isAnyOf(getRelationshipsError, inviteError, acceptError, declineError), (state, { payload }) => {
             state.pending = false;
             state.errors = payload;
         })

@@ -93,7 +93,6 @@ func Register(c *fiber.Ctx) error {
 		})
 	}
 
-	// TODO: This returns ugly error message, refactor it later on
 	if err := v.Struct(b); err != nil {
 		return c.Status(400).JSON(&types.ErrorResponse{
 			Errors: validatorUtils.FormatValidatorErrors(err),

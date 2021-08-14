@@ -71,6 +71,14 @@ func RelationshipList(c *fiber.Ctx) error {
 	return c.Status(200).JSON(result)
 }
 
+// Invite User
+// @Summary Sends friend request to specified user.
+// @Tags Relationship
+// @Produce json
+// @Param data body types.RelationshipInviteDTO true "Invite Data"
+// @Success 200 {array} types.RelationshipResponseItem
+// @Failure 400 {object} types.ErrorResponse
+// @Router /relationship [post]
 func RelationshipInvite(c *fiber.Ctx) error {
 	b := new(types.RelationshipInviteDTO)
 
@@ -146,6 +154,13 @@ func RelationshipInvite(c *fiber.Ctx) error {
 	})
 }
 
+// Accept Friend request
+// @Summary Accept friend request.
+// @Tags Relationship
+// @Param id path int true "Relationship ID"
+// @Success 200
+// @Failure 400 {object} types.ErrorResponse
+// @Router /relationship/{id}/accept [get]
 func RelationshipAccept(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("ID"), 10, 32)
 
@@ -211,6 +226,13 @@ func RelationshipAccept(c *fiber.Ctx) error {
 	return c.SendStatus(200)
 }
 
+// Decline Friend request
+// @Summary Decline friend request.
+// @Tags Relationship
+// @Param id path int true "Relationship ID"
+// @Success 200
+// @Failure 400 {object} types.ErrorResponse
+// @Router /relationship/{id}/decline [get]
 func RelationshipDecline(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("ID"), 10, 32)
 

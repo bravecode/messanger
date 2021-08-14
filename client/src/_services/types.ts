@@ -33,6 +33,10 @@ export interface TypesRegisterDTO {
   username: string;
 }
 
+export interface TypesRelationshipInviteDTO {
+  to?: number;
+}
+
 export interface TypesRelationshipResponse {
   friends: TypesRelationshipResponseItem[];
   incoming_requests: TypesRelationshipResponseItem[];

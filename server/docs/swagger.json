@@ -149,6 +149,99 @@
                         }
                     }
                 }
+            },
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Relationship"
+                ],
+                "summary": "Sends friend request to specified user.",
+                "parameters": [
+                    {
+                        "description": "Invite Data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.RelationshipInviteDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/types.RelationshipResponseItem"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/relationship/{id}/accept": {
+            "get": {
+                "tags": [
+                    "Relationship"
+                ],
+                "summary": "Accept friend request.",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Relationship ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/relationship/{id}/decline": {
+            "get": {
+                "tags": [
+                    "Relationship"
+                ],
+                "summary": "Decline friend request.",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Relationship ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
         "/users/search": {
@@ -259,6 +352,14 @@
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "types.RelationshipInviteDTO": {
+            "type": "object",
+            "properties": {
+                "to": {
+                    "type": "integer"
                 }
             }
         },

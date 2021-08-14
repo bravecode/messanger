@@ -47,6 +47,11 @@ definitions:
     - password
     - username
     type: object
+  types.RelationshipInviteDTO:
+    properties:
+      to:
+        type: integer
+    type: object
   types.RelationshipResponse:
     properties:
       friends:
@@ -199,6 +204,66 @@ paths:
           schema:
             $ref: '#/definitions/types.ErrorResponse'
       summary: Get all relationships for signed in user.
+      tags:
+      - Relationship
+    post:
+      parameters:
+      - description: Invite Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.RelationshipInviteDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.RelationshipResponseItem'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Sends friend request to specified user.
+      tags:
+      - Relationship
+  /relationship/{id}/accept:
+    get:
+      parameters:
+      - description: Relationship ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Accept friend request.
+      tags:
+      - Relationship
+  /relationship/{id}/decline:
+    get:
+      parameters:
+      - description: Relationship ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Decline friend request.
       tags:
       - Relationship
   /users/search:

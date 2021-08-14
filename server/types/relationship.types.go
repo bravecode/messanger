@@ -1,7 +1,7 @@
 package types
 
 type RelationshipInviteDTO struct {
-	To uint
+	To uint `json:"to" validate:"required"`
 }
 
 type RelationshipResponseItem struct {

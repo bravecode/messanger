@@ -30,7 +30,7 @@ func GetNextRelationshipID() uint {
 	))
 
 	if err != nil || index == 0 {
-		index = 0
+		index = 1
 
 		database.Conn.Do(
 			"SET",
