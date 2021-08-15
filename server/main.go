@@ -45,5 +45,8 @@ func main() {
 	routes.RelationshipRoutes(app)
 	routes.UserRoutes(app)
 
+	// This needs to be called last because of "Upgrade" error
+	routes.SocketRoutes(app)
+
 	app.Listen(":8000")
 }

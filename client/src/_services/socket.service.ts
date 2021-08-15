@@ -9,6 +9,10 @@ function connect() {
 
     const socket = new WebSocket(URL)
 
+    socket.onerror = function(event) {
+        console.error("WebSocket error observed:", event);
+    };
+
     return new Promise((resolve) => {
         socket.addEventListener('open', () => {
             console.log('User connected');

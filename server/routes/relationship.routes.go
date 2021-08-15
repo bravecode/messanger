@@ -8,7 +8,7 @@ import (
 )
 
 func RelationshipRoutes(app *fiber.App) {
-	group := app.Use(middleware.Auth).Group("/relationship")
+	group := app.Group("/relationship").Use(middleware.Auth)
 
 	// Protected Routes
 	group.Get("/", services.RelationshipList)
