@@ -11,11 +11,13 @@ import { connectRequest } from '_store/ducks/socket/actions';
 import Welcome from 'views/welcome';
 import Messanger from 'views/messanger';
 import { Spinner } from '_components/spinner/Spinner';
+import { getRelationshipsRequest } from '_store/ducks/relationship/actions';
 
 const TemplateDefault: React.FC = () => {
     // Store
     const dispatch = useDispatch();
     const { user, pending } = useSelector((store: IStore) => store.auth);
+    const { connection, connected, pending: socketPending } = useSelector((store: IStore) => store.socket);
 
     // Validate if user is logged in
     useEffect(() => {
@@ -24,12 +26,26 @@ const TemplateDefault: React.FC = () => {
         }
 
         // Estabilish websockets connection
-        if (user !== undefined && localStorage.getItem('token')) {
-            dispatch(connectRequest());
+        if (user !== undefined && localStorage.getItem('token') && !socketPending) {
+            dispatch(connectRequest(user.ID));
         }
     }, [user, dispatch]);
 
-    if (pending) {
+    useEffect(() => {
+        if (connection) {
+            connection.addEventListener('message', (e) => {
+                if (!e.data) return;
+    
+                const data = JSON.parse(e.data);
+    
+                if (data.event === "relationship:refresh") {
+                    dispatch(getRelationshipsRequest())
+                }
+            })
+        }
+    }, [connection, dispatch])
+
+    if (pending || socketPending) {
         return (
             <div className="h-screen w-screen bg-gray-200 flex items-center justify-center">
                 <Spinner className="text-black" />
@@ -37,7 +53,7 @@ const TemplateDefault: React.FC = () => {
         );
     }
 
-    if (user === undefined || !localStorage.getItem('token')) {
+    if (user === undefined || !localStorage.getItem('token') || !connected) {
         return <Redirect to="/auth/login" />
     }
 

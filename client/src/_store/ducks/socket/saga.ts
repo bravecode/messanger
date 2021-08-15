@@ -1,15 +1,21 @@
+import { Action } from '@reduxjs/toolkit';
 import { SagaIterator } from "redux-saga";
 import { all, call, fork, put, takeLatest } from "redux-saga/effects";
-import { connect } from '_services/socket.service';
 import { connectError, connectRequest, connectSuccess } from "./actions";
 
+import { connect } from '_services/socket.service';
+
 // Workers
-function *handleConnectRequest(): SagaIterator {
+function *handleConnectRequest(action: Action): SagaIterator {
     try {
-        yield call(connect);
-        yield put(connectSuccess());
+        if (connectRequest.match(action)) {
+            const userID = action.payload;
+        
+            const socket: WebSocket = yield call(connect, userID);
+
+            yield put(connectSuccess(socket));
+        }
     } catch (err) {
-        console.log(err);
         yield put(connectError());  
     }
 }

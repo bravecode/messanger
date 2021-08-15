@@ -3,9 +3,9 @@ export {
     disconnect
 }
 
-function connect() {
+function connect(userID: number) {
     // Note: Move API urls to .env file to make it env specific (good practice).
-    const URL = 'ws://localhost:8000/ws/123?v=1.0';
+    const URL = `ws://localhost:8000/ws/${userID}?v=1.0`;
 
     const socket = new WebSocket(URL)
 
@@ -17,7 +17,7 @@ function connect() {
         socket.addEventListener('open', () => {
             console.log('User connected');
 
-            resolve('');
+            resolve(socket);
         });
     });
 }

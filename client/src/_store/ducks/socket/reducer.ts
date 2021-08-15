@@ -2,11 +2,13 @@ import { createReducer } from "@reduxjs/toolkit"
 import { connectError, connectRequest, connectSuccess, disconnectRequest, disconnectSuccess } from "./actions";
 
 export interface ISocketState {
+    readonly connection?: WebSocket;
     readonly connected: boolean;
     readonly pending: boolean;
 }
 
 const defaultState: ISocketState = {
+    connection: undefined,
     connected: false,
     pending: false
 }
@@ -17,7 +19,8 @@ export default createReducer(defaultState, (builder) => {
             state.connected = false;
             state.pending = true;
         })
-        .addCase(connectSuccess, (state) => {
+        .addCase(connectSuccess, (state, { payload }) => {
+            state.connection = payload;
             state.connected = true;
             state.pending = false;
         })

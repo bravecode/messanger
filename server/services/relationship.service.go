@@ -1,6 +1,7 @@
 package services
 
 import (
+	"encoding/json"
 	"messanger/models"
 	"messanger/types"
 	validatorUtils "messanger/utils/validator"
@@ -149,7 +150,15 @@ func RelationshipInvite(c *fiber.Ctx) error {
 	models.IncreaseNextRelationshipID()
 
 	// Emit Socket Message
-	ikisocket.EmitToList([]string{Users[r.UserA], Users[r.UserB]}, []byte("relationships:refresh"))
+	event := &types.SocketEvent{
+		Event: "relationship:refresh",
+	}
+
+	eventJson, err := json.Marshal(event)
+
+	if err == nil {
+		ikisocket.EmitToList([]string{Users[r.UserA], Users[r.UserB]}, []byte(eventJson))
+	}
 
 	return c.JSON(&types.RelationshipResponseItem{
 		ID:       r.ID,
@@ -225,7 +234,15 @@ func RelationshipAccept(c *fiber.Ctx) error {
 	}
 
 	// Emit Socket Message
-	ikisocket.EmitToList([]string{Users[r.UserA], Users[r.UserB]}, []byte("relationships:refresh"))
+	event := &types.SocketEvent{
+		Event: "relationship:refresh",
+	}
+
+	eventJson, err := json.Marshal(event)
+
+	if err == nil {
+		ikisocket.EmitToList([]string{Users[r.UserA], Users[r.UserB]}, []byte(eventJson))
+	}
 
 	return c.SendStatus(200)
 }
@@ -281,7 +298,15 @@ func RelationshipDecline(c *fiber.Ctx) error {
 	}
 
 	// Emit Socket Message
-	ikisocket.EmitToList([]string{Users[r.UserA], Users[r.UserB]}, []byte("relationships:refresh"))
+	event := &types.SocketEvent{
+		Event: "relationship:refresh",
+	}
+
+	eventJson, err := json.Marshal(event)
+
+	if err == nil {
+		ikisocket.EmitToList([]string{Users[r.UserA], Users[r.UserB]}, []byte(eventJson))
+	}
 
 	return c.SendStatus(200)
 }

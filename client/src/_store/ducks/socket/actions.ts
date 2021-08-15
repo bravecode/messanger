@@ -1,8 +1,8 @@
 import { createAction } from '@reduxjs/toolkit';
 
 // Action - Connect
-export const connectRequest = createAction('socket:connect:request');
-export const connectSuccess = createAction('socket:connect:success');
+export const connectRequest = createAction<number>('socket:connect:request');
+export const connectSuccess = createAction<WebSocket>('socket:connect:success');
 export const connectError = createAction('socket:connect:error');
 
 // Action - Disconnect
