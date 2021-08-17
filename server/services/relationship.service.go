@@ -44,12 +44,18 @@ func RelationshipList(c *fiber.Ctx) error {
 		if err == nil {
 			otherUserID := getOtherUserID(r, currentUserID)
 			otherUser, _ := models.FindUserByID(otherUserID)
+			status := false
+
+			if _, ok := Users[r.UserA]; ok {
+				status = true
+			}
 
 			if r.Status == models.Friends {
 				result.Friends = append(result.Friends, types.RelationshipResponseItem{
 					ID:       r.ID,
 					UserID:   otherUser.ID,
 					Username: otherUser.Username,
+					Online:   status,
 				})
 
 				continue
@@ -60,6 +66,7 @@ func RelationshipList(c *fiber.Ctx) error {
 					ID:       r.ID,
 					UserID:   otherUser.ID,
 					Username: otherUser.Username,
+					Online:   status,
 				})
 
 				continue
@@ -69,6 +76,7 @@ func RelationshipList(c *fiber.Ctx) error {
 				ID:       r.ID,
 				UserID:   otherUser.ID,
 				Username: otherUser.Username,
+				Online:   status,
 			})
 		}
 	}
@@ -180,7 +188,7 @@ func RelationshipAccept(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(400).JSON(&types.ErrorResponse{
 			Errors: []string{
-				"Something went wrong. Try again later.",
+				"Something went wrong. Try again later. 1",
 			},
 		})
 	}
@@ -201,7 +209,7 @@ func RelationshipAccept(c *fiber.Ctx) error {
 	if r.Status == models.RequestedFromA && r.UserA == currentUserID {
 		return c.Status(400).JSON(&types.ErrorResponse{
 			Errors: []string{
-				"You are not able to accept this request.",
+				"You are not able to accept this request. 2",
 			},
 		})
 	}
@@ -209,7 +217,7 @@ func RelationshipAccept(c *fiber.Ctx) error {
 	if r.Status == models.RequestedFromB && r.UserB == currentUserID {
 		return c.Status(400).JSON(&types.ErrorResponse{
 			Errors: []string{
-				"You are not able to accept this request.",
+				"You are not able to accept this request. 3",
 			},
 		})
 	}
@@ -217,7 +225,7 @@ func RelationshipAccept(c *fiber.Ctx) error {
 	if r.UserA != currentUserID && r.UserB != currentUserID {
 		return c.Status(400).JSON(&types.ErrorResponse{
 			Errors: []string{
-				"You are not able to accept this request.",
+				"You are not able to accept this request. 4",
 			},
 		})
 	}
