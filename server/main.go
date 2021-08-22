@@ -4,6 +4,7 @@ import (
 	"messanger/database"
 	_ "messanger/docs"
 	"messanger/routes"
+	"messanger/services"
 
 	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/fiber/v2"
@@ -46,6 +47,7 @@ func main() {
 	routes.UserRoutes(app)
 
 	// This needs to be called last because of "Upgrade" error
+	services.SetupConversationSocketListeners()
 	routes.SocketRoutes(app)
 
 	app.Listen(":8000")
