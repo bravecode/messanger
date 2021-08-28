@@ -155,7 +155,7 @@ func GetConversations(c *fiber.Ctx) error {
 	// Get Messages
 	response := []types.Conversation{}
 
-	for relation, _ := range relations {
+	for _, relation := range relations {
 		relationID := uint(relation)
 
 		response = append(response, types.Conversation{

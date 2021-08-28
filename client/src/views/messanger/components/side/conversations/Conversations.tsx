@@ -19,7 +19,7 @@ const Conversations: React.FC = () => {
         return <div>Loading ...</div>
     }
 
-    if (!!conversations.length) {
+    if (!conversations.length) {
         return <div>No conversations opened yet.</div>
     }
 
