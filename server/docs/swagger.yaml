@@ -17,6 +17,35 @@ definitions:
     - auth
     - user
     type: object
+  types.Conversation:
+    properties:
+      messages:
+        items:
+          type: string
+        type: array
+      relationship_id:
+        type: integer
+    required:
+    - messages
+    - relationship_id
+    type: object
+  types.ConversationMessageDTO:
+    properties:
+      content:
+        type: string
+      relationship_id:
+        type: integer
+    required:
+    - content
+    - relationship_id
+    type: object
+  types.ConversationOpenDTO:
+    properties:
+      relationship_id:
+        type: integer
+    required:
+    - relationship_id
+    type: object
   types.ErrorResponse:
     properties:
       errors:
@@ -51,6 +80,8 @@ definitions:
     properties:
       to:
         type: integer
+    required:
+    - to
     type: object
   types.RelationshipResponse:
     properties:
@@ -85,6 +116,24 @@ definitions:
     - id
     - user_id
     - username
+    type: object
+  types.SocketEvent:
+    properties:
+      event:
+        type: string
+    required:
+    - event
+    type: object
+  types.SocketResponse:
+    properties:
+      errors:
+        items:
+          type: string
+        type: array
+      success:
+        type: boolean
+    required:
+    - success
     type: object
   types.UserResponse:
     properties:
@@ -188,6 +237,24 @@ paths:
       summary: Create new account
       tags:
       - Auth
+  /conversations:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Conversation'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Get all conversations for signed in user.
+      tags:
+      - Conversations
   /relationship:
     get:
       produces:

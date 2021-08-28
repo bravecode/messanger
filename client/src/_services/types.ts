@@ -18,6 +18,20 @@ export interface TypesAuthResponse {
   user: TypesUserResponse;
 }
 
+export interface TypesConversation {
+  messages: string[];
+  relationship_id: number;
+}
+
+export interface TypesConversationMessageDTO {
+  content: string;
+  relationship_id: number;
+}
+
+export interface TypesConversationOpenDTO {
+  relationship_id: number;
+}
+
 export interface TypesErrorResponse {
   errors?: string[];
 }
@@ -34,7 +48,7 @@ export interface TypesRegisterDTO {
 }
 
 export interface TypesRelationshipInviteDTO {
-  to?: number;
+  to: number;
 }
 
 export interface TypesRelationshipResponse {
@@ -48,6 +62,15 @@ export interface TypesRelationshipResponseItem {
   online?: boolean;
   user_id: number;
   username: string;
+}
+
+export interface TypesSocketEvent {
+  event: string;
+}
+
+export interface TypesSocketResponse {
+  errors?: string[];
+  success: boolean;
 }
 
 export interface TypesUserResponse {

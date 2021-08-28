@@ -28,5 +28,5 @@ export function *watchConnectRequest() {
 export default function* socketSaga() {
     yield all([
         fork(watchConnectRequest)
-    ])
+    ]);
 }

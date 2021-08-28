@@ -5,6 +5,8 @@ import { UserAvatar } from '_components/user/UserAvatar';
 import { IStore } from '_store';
 import { getRelationshipsRequest } from '_store/ducks/relationship/actions';
 import { FriendsIncomingRequest } from './FriendsIncomingRequest';
+import { FriendsItem } from './FriendsItem';
+import { FriendsOutgoingRequest } from './FriendsOutgoingRequest';
 import { FriendsSearch } from './FriendsSearch';
 
 const Friends: React.FC = () => {
@@ -22,17 +24,13 @@ const Friends: React.FC = () => {
 
             {
                 friends.map((friend) =>
-                    <div key={friend.ID} className="flex items-center">
-                        <UserAvatar />
-                        <div className="px-4">
-                            <div className="text-black text-sm text-bold mb-0.5">
-                                { friend.userName }
-                            </div>
-                            <div className="text-gray-500 text-xs">
-                                { friend.online ? 'Online' : 'Offline' }
-                            </div>
-                        </div>
-                    </div>
+                    <FriendsItem
+                        key={friend.ID}
+                        requestID={friend.ID}
+                        userID={friend.userID}
+                        username={friend.userName}
+                        online={friend.online}
+                    />
                 )
             }
 
@@ -49,17 +47,11 @@ const Friends: React.FC = () => {
 
             {
                 outgoingRequests.map((request) =>
-                    <div key={request.ID} className="flex items-center">
-                        <UserAvatar />
-                        <div className="px-4">
-                            <div className="text-black text-sm text-bold mb-0.5">
-                                { request.userName }
-                            </div>
-                            <div className="text-gray-500 text-xs">
-                                Outgoing Request
-                            </div>
-                        </div>
-                    </div>
+                    <FriendsOutgoingRequest
+                        key={request.ID}
+                        requestID={request.ID}
+                        username={request.userName}
+                    />
                 )
             }
         </div>

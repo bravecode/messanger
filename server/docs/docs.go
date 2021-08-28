@@ -138,6 +138,34 @@ var doc = `{
                 }
             }
         },
+        "/conversations": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Conversations"
+                ],
+                "summary": "Get all conversations for signed in user.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/types.Conversation"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/relationship": {
             "get": {
                 "produces": [
@@ -325,6 +353,50 @@ var doc = `{
                 }
             }
         },
+        "types.Conversation": {
+            "type": "object",
+            "required": [
+                "messages",
+                "relationship_id"
+            ],
+            "properties": {
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "relationship_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "types.ConversationMessageDTO": {
+            "type": "object",
+            "required": [
+                "content",
+                "relationship_id"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "relationship_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "types.ConversationOpenDTO": {
+            "type": "object",
+            "required": [
+                "relationship_id"
+            ],
+            "properties": {
+                "relationship_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "types.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -372,6 +444,9 @@ var doc = `{
         },
         "types.RelationshipInviteDTO": {
             "type": "object",
+            "required": [
+                "to"
+            ],
             "properties": {
                 "to": {
                     "type": "integer"
@@ -425,6 +500,34 @@ var doc = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "types.SocketEvent": {
+            "type": "object",
+            "required": [
+                "event"
+            ],
+            "properties": {
+                "event": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.SocketResponse": {
+            "type": "object",
+            "required": [
+                "success"
+            ],
+            "properties": {
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         },

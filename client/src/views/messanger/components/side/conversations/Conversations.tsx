@@ -1,57 +1,43 @@
 import React from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { UserAvatar } from '../../../../../_components/user/UserAvatar';
+import { IStore } from '_store';
+import { getConversationsRequest } from '_store/ducks/conversations/actions';
 
-const Conversations: React.FC = () => (
-    <div className="grid gap-4">
-        <div className="flex items-center">
-            <UserAvatar />
-            <div className="px-2.5">
-                <div className="text-black text-sm text-bold mb-0.5">
-                    Krzysztof Szymański <span className="text-xs text-gray-300">3h ago</span>
-                </div>
-                <div className="text-gray-500 text-xs">
-                    Hey man, just wanted to ask you abotu something...
-                </div>
-            </div>
+import { ConversationsItem } from './ConversationsItem';
+
+const Conversations: React.FC = () => {
+    const { conversations, pending } = useSelector((store: IStore) => store.conversations)
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getConversationsRequest());
+    }, [dispatch]);
+
+    if (pending) {
+        return <div>Loading ...</div>
+    }
+
+    if (!!conversations.length) {
+        return <div>No conversations opened yet.</div>
+    }
+
+    return (
+        <div className="grid gap-4">
+            
+            {
+                conversations.map((conversation) =>
+                    <ConversationsItem
+                        key={conversation.relationID}
+                        relationshipID={conversation.relationID}
+                        lastMessage={conversation.messages[conversation.messages.length - 1]}
+                    />
+                )
+            }
+    
         </div>
-
-        <div className="flex items-center">
-            <UserAvatar />
-            <div className="px-2.5">
-                <div className="text-black text-sm text-bold mb-0.5">
-                    Krzysztof Szymański <span className="text-xs text-gray-300">3h ago</span>
-                </div>
-                <div className="text-gray-500 text-xs">
-                    Hey man, just wanted to ask you abotu something...
-                </div>
-            </div>
-        </div>
-
-        <div className="flex items-center">
-            <UserAvatar />
-            <div className="px-2.5">
-                <div className="text-black text-sm text-bold mb-0.5">
-                    Krzysztof Szymański <span className="text-xs text-gray-300">3h ago</span>
-                </div>
-                <div className="text-gray-500 text-xs">
-                    Hey man, just wanted to ask you abotu something...
-                </div>
-            </div>
-        </div>
-
-        <div className="flex items-center">
-            <UserAvatar />
-            <div className="px-2.5">
-                <div className="text-black text-sm text-bold mb-0.5">
-                    Krzysztof Szymański <span className="text-xs text-gray-300">3h ago</span>
-                </div>
-                <div className="text-gray-500 text-xs">
-                    Hey man, just wanted to ask you abotu something...
-                </div>
-            </div>
-        </div>
-    </div>
-)
+    );
+}
 
 export { Conversations }

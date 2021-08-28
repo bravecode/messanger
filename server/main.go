@@ -45,6 +45,7 @@ func main() {
 	routes.AuthRoutes(app)
 	routes.RelationshipRoutes(app)
 	routes.UserRoutes(app)
+	routes.ConversationRoutes(app)
 
 	// This needs to be called last because of "Upgrade" error
 	services.SetupConversationSocketListeners()
