@@ -19,7 +19,7 @@ export interface TypesAuthResponse {
 }
 
 export interface TypesConversation {
-  messages: string[];
+  last_message?: string;
   relationship_id: number;
 }
 

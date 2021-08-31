@@ -7,6 +7,7 @@ import socket from './ducks/socket/reducer';
 import relationship from './ducks/relationship/reducer';
 import search from './ducks/search/reducer';
 import conversations from './ducks/conversations/reducer';
+import messages from './ducks/messages/reducer';
 
 // Middlewares
 import sagaMiddleware from './middlewares/saga';
@@ -17,7 +18,8 @@ const store = configureStore({
         socket,
         relationship,
         search,
-        conversations
+        conversations,
+        messages
     },
     middleware: [
         sagaMiddleware

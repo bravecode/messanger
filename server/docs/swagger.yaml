@@ -19,14 +19,11 @@ definitions:
     type: object
   types.Conversation:
     properties:
-      messages:
-        items:
-          type: string
-        type: array
+      last_message:
+        type: string
       relationship_id:
         type: integer
     required:
-    - messages
     - relationship_id
     type: object
   types.ConversationMessageDTO:
@@ -253,6 +250,30 @@ paths:
           schema:
             $ref: '#/definitions/types.ErrorResponse'
       summary: Get all conversations for signed in user.
+      tags:
+      - Conversations
+  /conversations/{id}:
+    get:
+      parameters:
+      - description: Relationship ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Get all messages for specified conversation.
       tags:
       - Conversations
   /relationship:

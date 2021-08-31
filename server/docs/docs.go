@@ -166,6 +166,43 @@ var doc = `{
                 }
             }
         },
+        "/conversations/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Conversations"
+                ],
+                "summary": "Get all messages for specified conversation.",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Relationship ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/relationship": {
             "get": {
                 "produces": [
@@ -356,15 +393,11 @@ var doc = `{
         "types.Conversation": {
             "type": "object",
             "required": [
-                "messages",
                 "relationship_id"
             ],
             "properties": {
-                "messages": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "last_message": {
+                    "type": "string"
                 },
                 "relationship_id": {
                     "type": "integer"

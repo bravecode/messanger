@@ -9,7 +9,7 @@ export interface IConversationsState {
 
 export interface IConversation {
     relationID: number;
-    messages: string[];
+    lastMessage: string;
 }
 
 const defaultState: IConversationsState = {

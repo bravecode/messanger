@@ -5,6 +5,7 @@ import relationshipSaga from "./relationship/saga";
 import searchSaga from "./search/saga";
 import socketSaga from "./socket/saga";
 import conversationsSaga from './conversations/saga';
+import messagesSaga from './messages/saga';
 
 export default function* rootSaga() {
     yield all([
@@ -13,5 +14,6 @@ export default function* rootSaga() {
         fork(relationshipSaga),
         fork(searchSaga),
         fork(conversationsSaga),
+        fork(messagesSaga)
     ]);
 }

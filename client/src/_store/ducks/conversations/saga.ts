@@ -7,6 +7,7 @@ import { getConversations, openConversation } from '_services/conversations.serv
 import { TypesConversation, TypesErrorResponse } from '_services/types';
 
 import { getConversationsError, getConversationsRequest, getConversationsSuccess, openConversationError, openConversationRequest } from './actions';
+import { IConversation } from './reducer';
 
 // Workers
 function* handleOpenConversationRequest(action: Action): SagaIterator {
@@ -26,10 +27,10 @@ function* handleGetConversationsRequest(): SagaIterator {
         const result: AxiosResponse<TypesConversation[]> = yield call(getConversations);
 
         yield put(getConversationsSuccess(
-            result.data.map((conversation) => {
+            result.data.map((conversation): IConversation => {
                 return {
                     relationID: conversation.relationship_id,
-                    messages: conversation.messages
+                    lastMessage: conversation.last_message || 'Say hello to your friend.'
                 }
             })
         ))

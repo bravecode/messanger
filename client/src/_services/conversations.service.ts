@@ -1,10 +1,11 @@
 import axios from 'axios';
 import rawStore from '_store/index';
-import { TypesConversationOpenDTO, TypesSocketEvent, TypesConversation } from './types';
+import { TypesConversation, TypesConversationOpenDTO, TypesSocketEvent } from './types';
 
 export {
     openConversation,
-    getConversations
+    getConversations,
+    getConversationMessages
 }
 
 function openConversation(relationshipID: number) {
@@ -24,7 +25,6 @@ function openConversation(relationshipID: number) {
         relationship_id: relationshipID
     }
 
-    console.log(data);
     connection.send(
         JSON.stringify({
             ...event,
@@ -40,6 +40,20 @@ function getConversations() {
     const URL = 'http://localhost:8000/conversations';
 
     return axios.get<TypesConversation[]>(
+        URL,
+        {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        }
+    );
+}
+
+function getConversationMessages(ID: number) {
+    // Note: Move API urls to .env file to make it env specific (good practice).
+    const URL = `http://localhost:8000/conversations/${ID}`;
+
+    return axios.get<string[]>(
         URL,
         {
             headers: {

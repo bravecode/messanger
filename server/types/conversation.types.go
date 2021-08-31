@@ -10,6 +10,10 @@ type ConversationOpenDTO struct {
 }
 
 type Conversation struct {
-	RelationshipID uint     `json:"relationship_id" validate:"required"`
-	Messages       []string `json:"messages" validate:"required"`
+	RelationshipID uint   `json:"relationship_id" validate:"required"`
+	LastMessage    string `json:"last_message"`
+}
+
+type ConversationMessages struct {
+	Messages []string `json:"messages" validate:"required"`
 }

@@ -159,7 +159,7 @@ func RelationshipInvite(c *fiber.Ctx) error {
 
 	// Emit Socket Message
 	event := &types.SocketEvent{
-		Event: "relationship:refresh",
+		Event: string(types.RelationshipRefresh),
 	}
 
 	eventJson, err := json.Marshal(event)
@@ -243,7 +243,7 @@ func RelationshipAccept(c *fiber.Ctx) error {
 
 	// Emit Socket Message
 	event := &types.SocketEvent{
-		Event: "relationship:refresh",
+		Event: string(types.RelationshipRefresh),
 	}
 
 	eventJson, err := json.Marshal(event)
@@ -307,7 +307,7 @@ func RelationshipDecline(c *fiber.Ctx) error {
 
 	// Emit Socket Message
 	event := &types.SocketEvent{
-		Event: "relationship:refresh",
+		Event: string(types.RelationshipRefresh),
 	}
 
 	eventJson, err := json.Marshal(event)

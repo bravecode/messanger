@@ -1,10 +1,8 @@
 import React from 'react';
 
 import { Side } from './components/side/Side';
-import { MessageGroup } from './components/main/MessageGroup';
 import { Header } from './components/main/Header';
-import { Footer } from './components/main/Footer';
-import { Game } from './components/main/Game';
+import { Main } from './components/Main';
 
 const Messanger: React.FC = () => {
     return (
@@ -16,46 +14,7 @@ const Messanger: React.FC = () => {
 
                 <Header />
                 
-                <MessageGroup 
-                    author={{
-                        username: 'John Doe',
-                    }}
-                    messages={[
-                        'Hello World!',
-                        'How are you doing?'
-                    ]}
-                    type='received'
-                />
-
-                <MessageGroup 
-                    author={{
-                        username: 'John Doe',
-                    }}
-                    messages={[
-                        'Hello World!',
-                        'How are you doing?'
-                    ]}
-                    type='sent'
-                />
-
-                <Game status="received" />
-
-                <Game status="finished" />
-
-                <MessageGroup 
-                    author={{
-                        username: 'John Doe',
-                    }}
-                    messages={[
-                        'Hello World!',
-                        'How are you doing?'
-                    ]}
-                    type='received'
-                />
-
-                <Game status="sent" />
-
-                <Footer />
+                <Main />
 
             </div>
 

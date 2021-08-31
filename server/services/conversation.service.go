@@ -6,20 +6,13 @@ import (
 	"messanger/database"
 	"messanger/models"
 	"messanger/types"
+	"strconv"
 
 	"github.com/antoniodipinto/ikisocket"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gomodule/redigo/redis"
 )
 
-// Dummy Route
-// @Summary This is a dummy route for generting socket types (WIP)
-// @Tags Socket
-// @Product json
-// @Success 200 {object} types.SocketEvent
-// @Success 200 {object} types.SocketResponse
-// @Success 200 {object} types.ConversationMessageDTO
-// @Success 200 {object} types.ConversationOpenDTO
 func SetupConversationSocketListeners() {
 	// Note: This function is responsbile for firing custom events
 	// ALL logic should be handled by custom events not this func.
@@ -35,7 +28,7 @@ func SetupConversationSocketListeners() {
 		ep.Kws.Fire(event.Event, []byte(ep.Data))
 	})
 
-	ikisocket.On("CONVERSATION:OPEN", func(ep *ikisocket.EventPayload) {
+	ikisocket.On(string(types.ConversationOpen), func(ep *ikisocket.EventPayload) {
 		message := &types.ConversationOpenDTO{}
 
 		if err := json.Unmarshal(ep.Data, message); err != nil {
@@ -62,7 +55,6 @@ func SetupConversationSocketListeners() {
 
 		response, err := json.Marshal(&types.Conversation{
 			RelationshipID: relationship.ID,
-			Messages:       []string{"Siema"},
 		})
 
 		if err != nil {
@@ -77,7 +69,7 @@ func SetupConversationSocketListeners() {
 		)
 	})
 
-	ikisocket.On("CONVERSATION:MESSAGE", func(ep *ikisocket.EventPayload) {
+	ikisocket.On(string(types.ConversationMessage), func(ep *ikisocket.EventPayload) {
 		message := &types.ConversationMessageDTO{}
 
 		if err := json.Unmarshal(ep.Data, message); err != nil {
@@ -152,17 +144,70 @@ func GetConversations(c *fiber.Ctx) error {
 		})
 	}
 
-	// Get Messages
+	// Get Conversations
 	response := []types.Conversation{}
 
 	for _, relation := range relations {
-		relationID := uint(relation)
+		relationshipID := uint(relation)
+		messages := models.GetConversationMessages(relationshipID)
+
+		lastMessage := ""
+		if len(messages) > 0 {
+			lastMessage = messages[len(messages)-1]
+		}
 
 		response = append(response, types.Conversation{
-			RelationshipID: relationID,
-			Messages:       []string{},
+			RelationshipID: relationshipID,
+			LastMessage:    lastMessage,
 		})
 	}
 
 	return c.JSON(response)
+}
+
+// Get Conversation Messages
+// @Summary Get all messages for specified conversation.
+// @Tags Conversations
+// @Produce json
+// @Param id path int true "Relationship ID"
+// @Success 200 {array} string
+// @Failure 400 {object} types.ErrorResponse
+// @Router /conversations/{id} [get]
+func GetConversationMessages(c *fiber.Ctx) error {
+	currentUserID := c.Locals("USER_ID").(uint)
+	rID := c.Params("ID")
+
+	relationshipID, err := strconv.ParseUint(rID, 10, 32)
+
+	if err != nil {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				"Could not fetch your messages. (1)",
+			},
+		})
+	}
+
+	// Validate if user is part of relationship
+	relationship, err := models.FindRelationshipByID(uint(relationshipID))
+
+	if err != nil {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				"Could not fetch your messages. (2)",
+			},
+		})
+	}
+
+	if relationship.UserA != currentUserID && relationship.UserB != currentUserID {
+		return c.Status(400).JSON(&types.ErrorResponse{
+			Errors: []string{
+				"Could not fetch your messages. (3)",
+			},
+		})
+	}
+
+	// Fetch Messages
+	messages := models.GetConversationMessages(relationship.ID)
+
+	return c.JSON(messages)
 }
