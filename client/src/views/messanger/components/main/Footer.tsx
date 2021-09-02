@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { ThumbUpIcon, EmojiHappyIcon, PhotographIcon, PuzzleIcon } from '@heroicons/react/outline';
+import { ThumbUpIcon, EmojiHappyIcon, PuzzleIcon } from '@heroicons/react/outline';
 import { EmojiPicker } from '_components/emoji/EmojiPicker';
 import { FooterGame } from './FooterGame';
+import { MessageInput } from './footer/MessageInput';
 
 const Footer: React.FC = () => {
     const [pickerOpen, setPickerOpen] = useState(false);
@@ -39,11 +40,7 @@ const Footer: React.FC = () => {
                     <PuzzleIcon className="w-full" />
                 </button>
             </div>
-            <input 
-                type="text" 
-                className="bg-gray-100 rounded-lg border-none text-gray-500 outline-none h-10 px-2.5 text-sm w-full" 
-                placeholder="Type something here"
-                />
+            <MessageInput />
             <div className="h-10 w-10 flex items-center justify-center relative">
                 <EmojiPicker 
                     open={pickerOpen}

@@ -11,19 +11,21 @@ import (
 func GetConversationMessages(id uint) []string {
 	res, _ := redis.Strings(
 		database.Conn.Do(
-			"SMEMBERS",
+			"LRANGE",
 			fmt.Sprintf("relationship:%d:messages", id),
+			"1",
+			"-1",
 		),
 	)
 
 	return res
 }
 
-func CreateConversationMessage(id uint, message string) error {
+func CreateConversationMessage(id uint, message string, userID uint) error {
 	_, err := database.Conn.Do(
-		"SADD",
+		"RPUSH",
 		fmt.Sprintf("relationship:%d:messages", id),
-		message,
+		fmt.Sprintf("%d:%s", userID, message),
 	)
 
 	if err != nil {

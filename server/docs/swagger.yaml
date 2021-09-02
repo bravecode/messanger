@@ -26,6 +26,16 @@ definitions:
     required:
     - relationship_id
     type: object
+  types.ConversationMessage:
+    properties:
+      author:
+        type: boolean
+      content:
+        type: string
+    required:
+    - author
+    - content
+    type: object
   types.ConversationMessageDTO:
     properties:
       content:
@@ -267,7 +277,7 @@ paths:
           description: OK
           schema:
             items:
-              type: string
+              $ref: '#/definitions/types.ConversationMessage'
             type: array
         "400":
           description: Bad Request

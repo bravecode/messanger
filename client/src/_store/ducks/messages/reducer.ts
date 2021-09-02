@@ -3,14 +3,20 @@ import { getConversationMessagesError, getConversationMessagesRequest, getConver
 
 export interface IMessagesState {
     activeConversationID?: number;
-    messages: string[];
+    groups: IMessageGroup[];
     pending: boolean;
     errors?: string[];
 }
 
+export interface IMessageGroup {
+    isAuthor: boolean;
+    authorName: string;
+    messages: string[]
+}
+
 const defaultState: IMessagesState = {
     activeConversationID: undefined,
-    messages: [],
+    groups: [],
     pending: false,
     errors: undefined
 }
@@ -22,7 +28,7 @@ export default createReducer(defaultState, (builder) => {
             state.pending = true;
         })
         .addCase(getConversationMessagesSuccess, (state, { payload }) => {
-            state.messages = payload;
+            state.groups = payload;
             state.pending = false;
         })
         .addCase(getConversationMessagesError, (state, { payload }) => {

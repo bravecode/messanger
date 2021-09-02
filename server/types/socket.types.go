@@ -3,9 +3,10 @@ package types
 type SocketEventType string
 
 const (
-	ConversationOpen    SocketEventType = "CONVERSATION:OPEN"
-	ConversationMessage SocketEventType = "CONVERSATION:MESSAGE"
-	RelationshipRefresh SocketEventType = "RELATIONSHIP:REFRESH"
+	ConversationOpenEvent            SocketEventType = "CONVERSATION:OPEN"
+	ConversationMessageEvent         SocketEventType = "CONVERSATION:MESSAGE"
+	RelationshipRefreshEvent         SocketEventType = "RELATIONSHIP:REFRESH"
+	ConversationMessageReceivedEvent SocketEventType = "CONVERSATION:MESSAGE:RECEIVED"
 )
 
 type SocketEvent struct {

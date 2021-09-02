@@ -12,6 +12,7 @@ import Welcome from 'views/welcome';
 import Messanger from 'views/messanger';
 import { Spinner } from '_components/spinner/Spinner';
 import { getRelationshipsRequest } from '_store/ducks/relationship/actions';
+import { getConversationMessagesRequest } from '_store/ducks/messages/actions';
 
 const TemplateDefault: React.FC = () => {
     // Store
@@ -38,8 +39,16 @@ const TemplateDefault: React.FC = () => {
     
                 const data = JSON.parse(e.data);
     
-                if (data.event === "relationship:refresh") {
+                console.log(data);
+
+                if (data.event === "RELATIONSHIP:REFRESH") {
                     dispatch(getRelationshipsRequest())
+                }
+
+                if (data.event === "CONVERSATION:MESSAGE:RECEIVED") {
+                    const { relationshipID } = data;
+
+                    dispatch(getConversationMessagesRequest(relationshipID))
                 }
             })
         }

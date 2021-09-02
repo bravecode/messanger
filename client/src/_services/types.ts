@@ -23,6 +23,11 @@ export interface TypesConversation {
   relationship_id: number;
 }
 
+export interface TypesConversationMessage {
+  author: boolean;
+  content: string;
+}
+
 export interface TypesConversationMessageDTO {
   content: string;
   relationship_id: number;

@@ -190,7 +190,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "type": "string"
+                                "$ref": "#/definitions/types.ConversationMessage"
                             }
                         }
                     },
@@ -401,6 +401,21 @@ var doc = `{
                 },
                 "relationship_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "types.ConversationMessage": {
+            "type": "object",
+            "required": [
+                "author",
+                "content"
+            ],
+            "properties": {
+                "author": {
+                    "type": "boolean"
+                },
+                "content": {
+                    "type": "string"
                 }
             }
         },

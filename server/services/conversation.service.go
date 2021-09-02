@@ -7,6 +7,7 @@ import (
 	"messanger/models"
 	"messanger/types"
 	"strconv"
+	"strings"
 
 	"github.com/antoniodipinto/ikisocket"
 	"github.com/gofiber/fiber/v2"
@@ -28,7 +29,7 @@ func SetupConversationSocketListeners() {
 		ep.Kws.Fire(event.Event, []byte(ep.Data))
 	})
 
-	ikisocket.On(string(types.ConversationOpen), func(ep *ikisocket.EventPayload) {
+	ikisocket.On(string(types.ConversationOpenEvent), func(ep *ikisocket.EventPayload) {
 		message := &types.ConversationOpenDTO{}
 
 		if err := json.Unmarshal(ep.Data, message); err != nil {
@@ -69,7 +70,7 @@ func SetupConversationSocketListeners() {
 		)
 	})
 
-	ikisocket.On(string(types.ConversationMessage), func(ep *ikisocket.EventPayload) {
+	ikisocket.On(string(types.ConversationMessageEvent), func(ep *ikisocket.EventPayload) {
 		message := &types.ConversationMessageDTO{}
 
 		if err := json.Unmarshal(ep.Data, message); err != nil {
@@ -100,7 +101,7 @@ func SetupConversationSocketListeners() {
 			return
 		}
 
-		err = models.CreateConversationMessage(message.RelationshipID, message.Content)
+		err = models.CreateConversationMessage(message.RelationshipID, message.Content, currentUserID)
 
 		if err != nil {
 			fmt.Println("Could not send message. Try again later.")
@@ -114,7 +115,19 @@ func SetupConversationSocketListeners() {
 			otherUserID = relationship.UserB
 		}
 
-		ep.Kws.EmitTo(Users[otherUserID], []byte(message.Content))
+		event := &types.ConversationMessageReceived{
+			Event:          string(types.ConversationMessageReceivedEvent),
+			RelationshipID: relationship.ID,
+		}
+
+		eventJson, err := json.Marshal(event)
+
+		if err == nil {
+			ep.Kws.EmitToList(
+				[]string{Users[relationship.UserA], Users[relationship.UserB]},
+				[]byte(eventJson),
+			)
+		}
 	})
 }
 
@@ -154,6 +167,8 @@ func GetConversations(c *fiber.Ctx) error {
 		lastMessage := ""
 		if len(messages) > 0 {
 			lastMessage = messages[len(messages)-1]
+			split := strings.SplitN(lastMessage, ":", 2)
+			lastMessage = split[1]
 		}
 
 		response = append(response, types.Conversation{
@@ -170,7 +185,7 @@ func GetConversations(c *fiber.Ctx) error {
 // @Tags Conversations
 // @Produce json
 // @Param id path int true "Relationship ID"
-// @Success 200 {array} string
+// @Success 200 {array} types.ConversationMessage
 // @Failure 400 {object} types.ErrorResponse
 // @Router /conversations/{id} [get]
 func GetConversationMessages(c *fiber.Ctx) error {
@@ -209,5 +224,17 @@ func GetConversationMessages(c *fiber.Ctx) error {
 	// Fetch Messages
 	messages := models.GetConversationMessages(relationship.ID)
 
-	return c.JSON(messages)
+	result := []types.ConversationMessage{}
+
+	for _, v := range messages {
+		split := strings.SplitN(v, ":", 2)
+		content := split[1]
+
+		result = append(result, types.ConversationMessage{
+			Author:  split[0] == strconv.FormatUint(uint64(currentUserID), 10),
+			Content: content,
+		})
+	}
+
+	return c.JSON(result)
 }

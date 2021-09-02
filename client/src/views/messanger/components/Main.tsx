@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { IStore } from '_store';
 
 const Main: React.FC = () => {
-    const { activeConversationID, pending } = useSelector((store: IStore) => store.messages);
+    const { activeConversationID, pending, groups } = useSelector((store: IStore) => store.messages);
 
     if (!activeConversationID) {
         return <div>Select conversation on left side menu.</div>
@@ -19,44 +19,17 @@ const Main: React.FC = () => {
 
     return (
        <div>
-            <MessageGroup 
-                author={{
-                    username: 'John Doe',
-                }}
-                messages={[
-                    'Hello World!',
-                    'How are you doing?'
-                ]}
-                type='received'
-            />
-
-            <MessageGroup 
-                author={{
-                    username: 'John Doe',
-                }}
-                messages={[
-                    'Hello World!',
-                    'How are you doing?'
-                ]}
-                type='sent'
-            />
-
-            <Game status="received" />
-
-            <Game status="finished" />
-
-            <MessageGroup 
-                author={{
-                    username: 'John Doe',
-                }}
-                messages={[
-                    'Hello World!',
-                    'How are you doing?'
-                ]}
-                type='received'
-            />
-
-            <Game status="sent" />
+            {
+                groups?.map((group) => 
+                    <MessageGroup
+                        author={{
+                            username: group.authorName
+                        }}
+                        messages={group.messages}
+                        type={group.isAuthor ? 'sent' : 'received'}
+                    />
+                )
+            }
 
             <Footer />
        </div>

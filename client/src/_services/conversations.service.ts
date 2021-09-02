@@ -1,6 +1,6 @@
 import axios from 'axios';
 import rawStore from '_store/index';
-import { TypesConversation, TypesConversationOpenDTO, TypesSocketEvent } from './types';
+import { TypesConversation, TypesConversationMessage, TypesConversationOpenDTO, TypesSocketEvent } from './types';
 
 export {
     openConversation,
@@ -53,7 +53,7 @@ function getConversationMessages(ID: number) {
     // Note: Move API urls to .env file to make it env specific (good practice).
     const URL = `http://localhost:8000/conversations/${ID}`;
 
-    return axios.get<string[]>(
+    return axios.get<TypesConversationMessage[]>(
         URL,
         {
             headers: {

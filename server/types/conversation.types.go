@@ -17,3 +17,13 @@ type Conversation struct {
 type ConversationMessages struct {
 	Messages []string `json:"messages" validate:"required"`
 }
+
+type ConversationMessage struct {
+	Author  bool   `json:"author" validate:"required"`
+	Content string `json:"content" validate:"required"`
+}
+
+type ConversationMessageReceived struct {
+	Event          string `json:"event" validate:"required"`
+	RelationshipID uint   `json:"relationshipID" validate:"required"`
+}
