@@ -7,6 +7,7 @@ const (
 	ConversationMessageEvent         SocketEventType = "CONVERSATION:MESSAGE"
 	RelationshipRefreshEvent         SocketEventType = "RELATIONSHIP:REFRESH"
 	ConversationMessageReceivedEvent SocketEventType = "CONVERSATION:MESSAGE:RECEIVED"
+	UpdateUserStatusEvent            SocketEventType = "USER:STATUS"
 )
 
 type SocketEvent struct {
@@ -16,4 +17,10 @@ type SocketEvent struct {
 type SocketResponse struct {
 	Success bool     `json:"success" validate:"required"`
 	Errors  []string `json:"errors"`
+}
+
+type UpdateUserStatus struct {
+	Event  string `json:"event" validate:"required"`
+	UserID uint   `json:"id" validate:"required"`
+	Online bool   `json:"online" validate:"required"`
 }

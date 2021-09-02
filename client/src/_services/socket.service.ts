@@ -1,3 +1,5 @@
+import rawStore from '_store/index';
+
 export {
     connect,
     disconnect
@@ -23,5 +25,17 @@ function connect(userID: number) {
 }
 
 function disconnect() {
+    const connection = rawStore.getState().socket.connection;
 
+    if (!connection) {
+        console.log('Socket connection is undefined.')
+
+        return;
+    }
+
+    return new Promise((resolve) => {
+        connection.close();
+
+        resolve(true);
+    });
 }

@@ -20,3 +20,11 @@ export const acceptError = createAction<string[]>('relationship:accept:error');
 export const declineRequest = createAction<number>('relationship:decline:request');
 export const declineSuccess = createAction('relationship:decline:success');
 export const declineError = createAction<string[]>('relationship:decline:error');
+
+// Action - Update User Status
+export interface UpdateUserStatusDTO {
+    userID: number;
+    online: boolean;
+}
+
+export const updateUserStatus = createAction<UpdateUserStatusDTO>('relationship:updateUserStatus');

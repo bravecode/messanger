@@ -109,11 +109,11 @@ func SetupConversationSocketListeners() {
 			return
 		}
 
-		otherUserID := relationship.UserA
+		// otherUserID := relationship.UserA
 
-		if currentUserID == otherUserID {
-			otherUserID = relationship.UserB
-		}
+		// if currentUserID == otherUserID {
+		// 	otherUserID = relationship.UserB
+		// }
 
 		event := &types.ConversationMessageReceived{
 			Event:          string(types.ConversationMessageReceivedEvent),

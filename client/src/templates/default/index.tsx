@@ -11,7 +11,7 @@ import { connectRequest } from '_store/ducks/socket/actions';
 import Welcome from 'views/welcome';
 import Messanger from 'views/messanger';
 import { Spinner } from '_components/spinner/Spinner';
-import { getRelationshipsRequest } from '_store/ducks/relationship/actions';
+import { getRelationshipsRequest, updateUserStatus } from '_store/ducks/relationship/actions';
 import { getConversationMessagesRequest } from '_store/ducks/messages/actions';
 
 const TemplateDefault: React.FC = () => {
@@ -49,6 +49,15 @@ const TemplateDefault: React.FC = () => {
                     const { relationshipID } = data;
 
                     dispatch(getConversationMessagesRequest(relationshipID))
+                }
+
+                if (data.event === "USER:STATUS") {
+                    const { id, online } = data;
+
+                    dispatch(updateUserStatus({
+                        userID: id,
+                        online
+                    }))
                 }
             })
         }

@@ -1,6 +1,9 @@
 package services
 
 import (
+	"encoding/json"
+	"messanger/models"
+	"messanger/types"
 	"strconv"
 
 	"github.com/antoniodipinto/ikisocket"
@@ -32,8 +35,31 @@ func SocketConnection(kws *ikisocket.Websocket) {
 	// Store ID in session
 	kws.SetAttribute("uid", uint(userID))
 
-	// TODO: Notify user's friends to update status.
-	kws.Broadcast([]byte("New user in the house."), true)
+	// Notify user's friends to update status.
+	friends, err := models.FindRelationshipsForUser(uint(userID))
+
+	if err == nil {
+		friendsSocketIds := []string{}
+
+		for _, v := range friends {
+			if val, ok := Users[v]; ok {
+				friendsSocketIds = append(friendsSocketIds, val)
+			}
+
+			event := &types.UpdateUserStatus{
+				Event:  string(types.UpdateUserStatusEvent),
+				UserID: uint(userID),
+				Online: true,
+			}
+
+			eventJson, err := json.Marshal(event)
+
+			if err == nil {
+				kws.EmitToList(friendsSocketIds, []byte(eventJson))
+			}
+
+		}
+	}
 
 	//Write welcome message
 	kws.Emit([]byte("Connected"))

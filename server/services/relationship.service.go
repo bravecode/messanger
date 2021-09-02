@@ -319,6 +319,72 @@ func RelationshipDecline(c *fiber.Ctx) error {
 	return c.SendStatus(200)
 }
 
+func SetupRelationshipSocketListeners() {
+	ikisocket.On(ikisocket.EventDisconnect, func(ep *ikisocket.EventPayload) {
+		currentUserID := ep.SocketAttributes["uid"].(uint)
+
+		// Notify user's friends to update status.
+		friends, err := models.FindRelationshipsForUser(currentUserID)
+
+		if err == nil {
+			friendsSocketIds := []string{}
+
+			for _, v := range friends {
+				if val, ok := Users[v]; ok {
+					friendsSocketIds = append(friendsSocketIds, val)
+				}
+
+				event := &types.UpdateUserStatus{
+					Event:  string(types.UpdateUserStatusEvent),
+					UserID: currentUserID,
+					Online: false,
+				}
+
+				eventJson, err := json.Marshal(event)
+
+				if err == nil {
+					ep.Kws.EmitToList(friendsSocketIds, []byte(eventJson))
+				}
+
+			}
+		}
+
+		delete(Users, currentUserID)
+	})
+
+	ikisocket.On(ikisocket.EventClose, func(ep *ikisocket.EventPayload) {
+		currentUserID := ep.SocketAttributes["uid"].(uint)
+
+		// Notify user's friends to update status.
+		friends, err := models.FindRelationshipsForUser(currentUserID)
+
+		if err == nil {
+			friendsSocketIds := []string{}
+
+			for _, v := range friends {
+				if val, ok := Users[v]; ok {
+					friendsSocketIds = append(friendsSocketIds, val)
+				}
+
+				event := &types.UpdateUserStatus{
+					Event:  string(types.UpdateUserStatusEvent),
+					UserID: currentUserID,
+					Online: false,
+				}
+
+				eventJson, err := json.Marshal(event)
+
+				if err == nil {
+					ep.Kws.EmitToList(friendsSocketIds, []byte(eventJson))
+				}
+
+			}
+		}
+
+		delete(Users, currentUserID)
+	})
+}
+
 // Helpers
 func getOtherUserID(value *models.Relationship, currentUserID uint) uint {
 	var otherUserID uint

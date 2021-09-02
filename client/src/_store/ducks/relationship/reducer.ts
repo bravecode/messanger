@@ -1,5 +1,5 @@
 import { createReducer, isAnyOf } from '@reduxjs/toolkit';
-import { acceptError, declineError, getRelationshipsError, getRelationshipsRequest, getRelationshipsSuccess, inviteError } from './actions';
+import { acceptError, declineError, getRelationshipsError, getRelationshipsRequest, getRelationshipsSuccess, inviteError, updateUserStatus } from './actions';
 
 export interface IRelationshipState extends IRelationshipsGrouped {
     pending: boolean;
@@ -29,6 +29,18 @@ const defaultState: IRelationshipState = {
 
 export default createReducer(defaultState, (builder) => {
     builder
+        .addCase(updateUserStatus, (state, { payload }) => {
+            state.friends = state.friends.map((friend) => {
+                if (friend.userID === payload.userID) {
+                    return {
+                        ...friend,
+                        online: payload.online
+                    }
+                }
+
+                return friend;
+            })
+        })
         .addCase(getRelationshipsRequest, (state) => {
             state.pending = true;
         })

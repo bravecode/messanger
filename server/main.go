@@ -49,6 +49,7 @@ func main() {
 
 	// This needs to be called last because of "Upgrade" error
 	services.SetupConversationSocketListeners()
+	services.SetupRelationshipSocketListeners()
 	routes.SocketRoutes(app)
 
 	app.Listen(":8000")
