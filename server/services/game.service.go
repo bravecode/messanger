@@ -49,7 +49,6 @@ func SetupGameSocketListeners() {
 
 		currentGame, err := models.GetCurrentGame(relationship.ID)
 
-		// IF last_move does not exist -> New Game
 		if err != nil {
 			models.CreateGame(
 				relationship.ID,
@@ -57,35 +56,134 @@ func SetupGameSocketListeners() {
 				currentUserID,
 			)
 
-			// TODO: Send Socket Message about new game
-			fmt.Println("New game has been created.")
+			ev := &types.GameStart{
+				Event:          string(types.GameStartEvent),
+				RelationshipID: relationship.ID,
+			}
+
+			event, err := json.Marshal(ev)
+
+			if err == nil {
+				ep.Kws.EmitTo(
+					Users[getOtherUserID(relationship, currentUserID)],
+					[]byte(event),
+				)
+			}
 
 			return
 		}
 
-		// If last action was made by current user block it
 		if currentGame.UserID == currentUserID {
 			fmt.Println("Not your turn.")
 
 			return
 		}
 
-		// IF last_move exists then increase score and send proper message type
 		gameResult := resolveGameScore(currentGame.UserAction, message.Choice)
+
+		yourScore := models.GetScore(relationship.ID, currentUserID)
+		foeScore := models.GetScore(relationship.ID, currentGame.UserID)
 
 		if gameResult == 1 {
 			models.IncreaseScore(relationship.ID, currentUserID)
 
-			fmt.Println("You've won")
+			ev := &types.GameResult{
+				Event:          string(types.GameResultEvent),
+				RelationshipID: relationship.ID,
+				Result:         1,
+				Score: types.GameScore{
+					You: yourScore + 1,
+					Foe: foeScore,
+				},
+			}
+
+			event, err := json.Marshal(ev)
+
+			if err == nil {
+				ep.Kws.EmitTo(
+					Users[currentUserID],
+					[]byte(event),
+				)
+			}
+
+			ev = &types.GameResult{
+				Event:          string(types.GameResultEvent),
+				RelationshipID: relationship.ID,
+				Result:         -1,
+				Score: types.GameScore{
+					You: foeScore,
+					Foe: yourScore + 1,
+				},
+			}
+
+			event, err = json.Marshal(ev)
+
+			if err == nil {
+				ep.Kws.EmitTo(
+					Users[currentGame.UserID],
+					[]byte(event),
+				)
+			}
 		} else if gameResult == -1 {
 			models.DecreaseScore(relationship.ID, currentUserID)
 
-			fmt.Println("You've lost. Game Over.")
-		} else {
-			fmt.Println("DRAW")
-		}
+			ev := &types.GameResult{
+				Event:          string(types.GameResultEvent),
+				RelationshipID: relationship.ID,
+				Result:         -1,
+				Score: types.GameScore{
+					You: yourScore,
+					Foe: foeScore + 1,
+				},
+			}
 
-		// TODO: Send Socket Message with the result & Total Score
+			event, err := json.Marshal(ev)
+
+			if err == nil {
+				ep.Kws.EmitTo(
+					Users[currentUserID],
+					[]byte(event),
+				)
+			}
+
+			ev = &types.GameResult{
+				Event:          string(types.GameResultEvent),
+				RelationshipID: relationship.ID,
+				Result:         1,
+				Score: types.GameScore{
+					You: foeScore + 1,
+					Foe: yourScore,
+				},
+			}
+
+			event, err = json.Marshal(ev)
+
+			if err == nil {
+				ep.Kws.EmitTo(
+					Users[currentGame.UserID],
+					[]byte(event),
+				)
+			}
+		} else {
+			ev := &types.GameResult{
+				Event:          string(types.GameResultEvent),
+				RelationshipID: relationship.ID,
+				Result:         0,
+				Score: types.GameScore{
+					You: foeScore,
+					Foe: yourScore,
+				},
+			}
+
+			event, err := json.Marshal(ev)
+
+			if err == nil {
+				ep.Kws.EmitToList(
+					[]string{Users[currentUserID], Users[currentGame.UserID]},
+					[]byte(event),
+				)
+			}
+		}
 
 		models.DeleteCurrentGame(relationship.ID)
 	})

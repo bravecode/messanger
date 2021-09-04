@@ -386,14 +386,10 @@ func SetupRelationshipSocketListeners() {
 }
 
 // Helpers
-func getOtherUserID(value *models.Relationship, currentUserID uint) uint {
-	var otherUserID uint
-
-	if value.UserA == currentUserID {
-		otherUserID = value.UserB
-	} else {
-		otherUserID = value.UserA
+func getOtherUserID(relationship *models.Relationship, currentUserID uint) uint {
+	if relationship.UserA == currentUserID {
+		return relationship.UserB
 	}
 
-	return otherUserID
+	return relationship.UserA
 }

@@ -8,6 +8,8 @@ const (
 	RelationshipRefreshEvent         SocketEventType = "RELATIONSHIP:REFRESH"
 	ConversationMessageReceivedEvent SocketEventType = "CONVERSATION:MESSAGE:RECEIVED"
 	UpdateUserStatusEvent            SocketEventType = "USER:STATUS"
+	GameStartEvent                   SocketEventType = "GAME:START"
+	GameResultEvent                  SocketEventType = "GAME:RESULT"
 )
 
 type SocketEvent struct {
