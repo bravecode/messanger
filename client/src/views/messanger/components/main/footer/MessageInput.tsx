@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { PaperAirplaneIcon } from '@heroicons/react/solid';
 import { useSelector } from 'react-redux';
 
 import { sendMessage } from '_services/message.service';
@@ -37,7 +36,6 @@ const MessageInput: React.FC = () => {
             {
                 !!message.length && (
                     <button className="absolute w-10 h-10 top-0 right-0 flex items-center justify-center" onClick={handleSubmit}>
-                        <PaperAirplaneIcon className="w-5 h-5 text-blue-500" />
                     </button>
                 )
             }

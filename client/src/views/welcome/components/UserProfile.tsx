@@ -1,5 +1,4 @@
 import React from 'react';
-import { BellIcon } from '@heroicons/react/solid';
 
 import { UserAvatar } from '../../../_components/user/UserAvatar';
 
@@ -16,9 +15,6 @@ const UserProfile: React.FC = () => {
                         Working on a new project.
                     </div>
                 </div>
-            </div>
-            <div>
-                <BellIcon className="text-black w-6" />
             </div>
         </div>
     );

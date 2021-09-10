@@ -1,5 +1,5 @@
 import React from 'react';
-import { XIcon, ExclamationIcon } from '@heroicons/react/outline';
+import { IoAlert, IoClose } from 'react-icons/io5';
 import classNames from 'classnames';
 
 export interface IAlertProps {
@@ -54,7 +54,7 @@ const Alert: React.FC<IAlertProps> = ({
         <div className={_containerStyles}>
             <div className="h-full w-6">
                 <div className="w-6 h-6 rounded-full bg-red-200 flex items-center justify-center">
-                    <ExclamationIcon className="w-4 text-red-500" />
+                    <IoAlert className="w-4 text-red-500" />
                 </div>
             </div>
             <div className="w-full">
@@ -65,7 +65,7 @@ const Alert: React.FC<IAlertProps> = ({
                     {
                         onClose && (
                             <button onClick={handleClose} className="text-gray-300 hover:text-black transition">
-                                <XIcon className="w-4" />
+                                <IoClose className="w-4" />
                             </button>
                         )
                     }

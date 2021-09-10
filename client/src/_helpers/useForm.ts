@@ -7,6 +7,7 @@ export interface IUseFormProps<T> {
 export interface IUseFormResult<T> {
     data: T;
     onInputChange: (e: React.FormEvent<HTMLInputElement>) => void;
+    onInputValueSet: (name: string, value: string) => void;
 }
 
 function useForm<T> ({
@@ -18,11 +19,7 @@ function useForm<T> ({
     const onInputChange = (e: React.FormEvent<HTMLInputElement>) => {
         const { name, value } = e.currentTarget;
 
-        if (!Object.keys(initialData).includes(name)) {
-            console.log('useForm error goes here');
-
-            return;
-        }
+        if (!isFieldHere(name)) return;
 
         setData((prev) => {
             return {
@@ -32,9 +29,32 @@ function useForm<T> ({
         });
     }
 
+    const onInputValueSet = (name: string, value: string) => {
+        if (!isFieldHere(name)) return;
+        
+        setData((prev) => {
+            return {
+                ...prev,
+                [name]: value
+            }
+        });
+    }
+
+    // Helpers
+    const isFieldHere = (name: string) => {
+        if (!Object.keys(initialData).includes(name)) {
+            console.log(`[useForm] Field "${name}" was not specified.`);
+
+            return false;
+        }
+
+        return true;
+    }
+
     return {
         data,
-        onInputChange
+        onInputChange,
+        onInputValueSet
     }
 }
 

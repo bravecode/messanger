@@ -1,5 +1,4 @@
 import React from 'react';
-import { BellIcon } from '@heroicons/react/outline';
 
 import { UserAvatar } from '_components/user/UserAvatar';
 

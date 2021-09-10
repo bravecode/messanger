@@ -1,4 +1,3 @@
-import { SearchIcon } from '@heroicons/react/solid';
 import React from 'react';
 
 import { Input } from '_components/form/Input';
@@ -33,7 +32,7 @@ const FriendsSearchInput: React.FC<IFriendsSearchInputProps> = ({
         <form className="flex items-center flex-nowrap" onSubmit={handleSubmit}>
             <Input name="username" onChange={onInputChange} className="rounded-r-none" placeholder="Search for user..." />
             <button type="submit" className="bg-blue-500 border-none outline-none rounded-r-lg h-10 w-10 hover:bg-blue-400 flex items-center justify-center">
-                <SearchIcon className="w-4 text-white" />
+
             </button>
         </form>
     );

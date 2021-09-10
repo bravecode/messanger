@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { ThumbUpIcon, EmojiHappyIcon, PuzzleIcon } from '@heroicons/react/outline';
 import { EmojiPicker } from '_components/emoji/EmojiPicker';
 import { FooterGame } from './FooterGame';
 import { MessageInput } from './footer/MessageInput';
@@ -37,7 +36,7 @@ const Footer: React.FC = () => {
                 />
 
                 <button className="text-gray-300 w-6 hover:text-blue-400 transition cursor-pointer" onClick={handleGameToggle}>
-                    <PuzzleIcon className="w-full" />
+
                 </button>
             </div>
             <MessageInput />
@@ -48,12 +47,12 @@ const Footer: React.FC = () => {
                 />
 
                 <button className="text-gray-300 w-6 hover:text-blue-400 transition cursor-pointer" onClick={handleEmojiPickerToggle}>
-                    <EmojiHappyIcon className="w-full" />
+
                 </button>
             </div>
             <div className="h-10 w-10 flex items-center justify-center">
                 <button className="text-gray-300 w-6 hover:text-blue-400 transition cursor-pointer" onClick={onThumbsUp}>
-                    <ThumbUpIcon className="w-full" />
+
                 </button>
             </div>
         </div>
