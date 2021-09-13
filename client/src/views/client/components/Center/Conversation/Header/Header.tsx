@@ -1,11 +1,11 @@
 import React from 'react';
 
 // Components
-import { ConversationHeaderGame } from './ConversationHeaderGame';
+import { HeaderGame } from './HeaderGame';
 
-const ConversationHeader: React.FC = () => {
+const Header: React.FC = () => {
     return (
-        <header className="w-full flex items-center justify-between">
+        <header className="w-full flex items-center justify-between flex-shrink-0">
 
             <div className="flex items-center gap-2.5">
                 <div className="h-12 w-12 bg-custom-backgorund text-white flex items-center justify-center rounded-full">
@@ -21,10 +21,10 @@ const ConversationHeader: React.FC = () => {
                 </div>
             </div>
 
-            <ConversationHeaderGame />
+            <HeaderGame />
 
         </header>
     );
 }
 
-export { ConversationHeader }
+export { Header }

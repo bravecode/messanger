@@ -1,7 +1,7 @@
 import React from 'react';
 import { IoGameController } from "react-icons/io5";
 
-const ConversationHeaderGame: React.FC = () => {
+const HeaderGame: React.FC = () => {
     return (
         <div className="h-12 relative rounded-l-full bg-custom-gray-lightest rounded-r-2xl">
             <div className="h-12 w-12 rounded-full bg-purple-500 absolute left-0 top-0 flex items-center justify-center">
@@ -32,4 +32,4 @@ const ConversationHeaderGame: React.FC = () => {
     );
 }
 
-export { ConversationHeaderGame }
+export { HeaderGame }

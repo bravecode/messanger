@@ -1,13 +1,20 @@
 import React from 'react';
+import { Footer } from './Footer/Footer';
 
 // Components
-import { ConversationHeader } from './ConversationHeader';
+import { Header } from './Header/Header';
 
 const Conversation: React.FC = () => {
     return (
-        <div className="h-full w-full">
+        <div className="h-full w-full flex flex-col">
 
-            <ConversationHeader />
+            <Header />
+
+            <div className="h-full">
+
+            </div>
+
+            <Footer />
 
         </div>
     );
