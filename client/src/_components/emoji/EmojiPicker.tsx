@@ -12,7 +12,7 @@ const EmojiPicker: React.FC<IEmojiPickerProps> = ({
     onSelect
 }) => {
     const _containerStyles = classNames({
-        'w-48 absolute bottom-full right-0 bg-white shadow-md p-2.5 grid grid-cols-6 rounded-lg': true,
+        'w-48 absolute bottom-full right-0 mb-2.5 bg-white shadow-md p-2.5 grid grid-cols-6 rounded-md': true,
         'hidden': !open,
     });
 
