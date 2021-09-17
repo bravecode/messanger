@@ -1,50 +1,32 @@
 import React from 'react';
-import { Footer } from './Footer/Footer';
+import { useSelector } from 'react-redux';
+
+import { IStore } from '_store';
 
 // Components
 import { Header } from './Header/Header';
 import { MessageGroup } from './MessageGroup/MessageGroup';
+import { Footer } from './Footer/Footer';
 
 const Conversation: React.FC = () => {
+    const { groups } = useSelector((store: IStore) => store.messages);
+
     return (
         <div className="h-full w-full flex flex-col">
 
             <Header />
 
             <div className="h-full">
-                <MessageGroup
-                    userName="John Doe"
-                    type="sent"
-                    messages={[
-                        "Hey there, what's going on?"
-                    ]}
-                />
-
-                <MessageGroup
-                    userName="Krzysztof"
-                    type="received"
-                    messages={[
-                        "Nothing, just chilling."
-                    ]}
-                />
-
-                <MessageGroup
-                    userName="John Doe"
-                    type="sent"
-                    messages={[
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-                    ]}
-                />
-
-                <MessageGroup
-                    userName="Krzysztof"
-                    type="received"
-                    messages={[
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-                    ]}
-                />
+                {
+                    groups.map((group, i) =>
+                        <MessageGroup
+                            key={i}
+                            userName={group.authorName}
+                            type={group.isAuthor ? 'sent' : 'received'}
+                            messages={group.messages}
+                        />
+                    )
+                }
             </div>
 
             <Footer />

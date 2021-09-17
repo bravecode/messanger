@@ -1,14 +1,17 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
+
+import { IStore } from '_store';
 
 // Screens
 import { ChooseConversation } from './ChooseConversation/ChooseConversation';
 import { Conversation } from './Conversation/Conversation';
 
 const Center: React.FC = () => {
-    const conversationID = '123';
+    const { activeConversationID } = useSelector((store: IStore) => store.messages);
 
     const renderScreen = () => {
-        if (!conversationID) {
+        if (!activeConversationID) {
             return <ChooseConversation />
         }
 

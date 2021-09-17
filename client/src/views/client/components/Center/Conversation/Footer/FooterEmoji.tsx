@@ -5,7 +5,13 @@ import classNames from 'classnames';
 // Components
 import { EmojiPicker } from '_components/emoji/EmojiPicker';
 
-const FooterEmoji: React.FC = () => {
+export interface IFooterEmojiProps {
+    onSubmit: (value: string) => void;
+}
+
+const FooterEmoji: React.FC<IFooterEmojiProps> = ({
+    onSubmit
+}) => {
     const [open, setOpen] = useState(false);
     
     // Handlers
@@ -16,11 +22,11 @@ const FooterEmoji: React.FC = () => {
     const handleEmojiPickerSelect = (value: string) => {
         setOpen(false);
 
-        console.log(value);
+        onSubmit(value);
     }
 
     const onThumbsUp = () => {
-        console.log(`👍`);
+        onSubmit(`👍`);
     }
 
     // Styles

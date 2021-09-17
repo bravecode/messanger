@@ -3,11 +3,17 @@ import { IoSend } from 'react-icons/io5';
 
 import { useForm } from '_helpers/useForm';
 
+export interface IFooterInputProps {
+    onSubmit: (value: string) => void;
+}
+
 export interface IFooterInputValues {
     value: string;
 }
 
-const FooterInput: React.FC = () => {
+const FooterInput: React.FC<IFooterInputProps> = ({
+    onSubmit
+}) => {
     const { data, onInputChange, onInputValueSet } = useForm<IFooterInputValues>({
         initialData: {
             value: ''
@@ -16,8 +22,7 @@ const FooterInput: React.FC = () => {
 
     // Handlers
     const handleSubmit = () => {
-        console.log(data.value);
-
+        onSubmit(data.value);
         onInputValueSet('value', '');
     }
 
