@@ -15,7 +15,11 @@ const Side: React.FC = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(getRelationshipsRequest())
+        dispatch(getRelationshipsRequest());
+    }, [dispatch]);
+
+    useEffect(() => {
+        
     }, [dispatch]);
 
     // Side View Management

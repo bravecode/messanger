@@ -6,7 +6,6 @@ import auth from './ducks/auth/reducer';
 import socket from './ducks/socket/reducer';
 import relationship from './ducks/relationship/reducer';
 import search from './ducks/search/reducer';
-import conversations from './ducks/conversations/reducer';
 import messages from './ducks/messages/reducer';
 import game from './ducks/game/reducer';
 
@@ -19,7 +18,6 @@ const store = configureStore({
         socket,
         relationship,
         search,
-        conversations,
         messages,
         game
     },

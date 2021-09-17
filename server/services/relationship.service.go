@@ -6,6 +6,7 @@ import (
 	"messanger/types"
 	validatorUtils "messanger/utils/validator"
 	"strconv"
+	"strings"
 
 	"github.com/antoniodipinto/ikisocket"
 	"github.com/go-playground/validator"
@@ -50,12 +51,22 @@ func RelationshipList(c *fiber.Ctx) error {
 				status = true
 			}
 
+			messages := models.GetConversationMessages(r.ID)
+
+			lastMessage := ""
+			if len(messages) > 0 {
+				lastMessage = messages[len(messages)-1]
+				split := strings.SplitN(lastMessage, ":", 2)
+				lastMessage = split[1]
+			}
+
 			if r.Status == models.Friends {
 				result.Friends = append(result.Friends, types.RelationshipResponseItem{
-					ID:       r.ID,
-					UserID:   otherUser.ID,
-					Username: otherUser.Username,
-					Online:   status,
+					ID:          r.ID,
+					UserID:      otherUser.ID,
+					Username:    otherUser.Username,
+					Online:      status,
+					LastMessage: lastMessage,
 				})
 
 				continue

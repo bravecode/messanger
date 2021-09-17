@@ -5,10 +5,11 @@ type RelationshipInviteDTO struct {
 }
 
 type RelationshipResponseItem struct {
-	ID       uint   `json:"id" validate:"required"`
-	UserID   uint   `json:"user_id" validate:"required"`
-	Username string `json:"username" validate:"required"`
-	Online   bool   `json:"online"`
+	ID          uint   `json:"id" validate:"required"`
+	UserID      uint   `json:"user_id" validate:"required"`
+	Username    string `json:"username" validate:"required"`
+	Online      bool   `json:"online"`
+	LastMessage string `json:"last_message"`
 }
 
 type RelationshipResponse struct {

@@ -17,15 +17,6 @@ definitions:
     - auth
     - user
     type: object
-  types.Conversation:
-    properties:
-      last_message:
-        type: string
-      relationship_id:
-        type: integer
-    required:
-    - relationship_id
-    type: object
   types.ConversationMessage:
     properties:
       author:
@@ -113,6 +104,8 @@ definitions:
     properties:
       id:
         type: integer
+      last_message:
+        type: string
       online:
         type: boolean
       user_id:
@@ -244,24 +237,6 @@ paths:
       summary: Create new account
       tags:
       - Auth
-  /conversations:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/types.Conversation'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/types.ErrorResponse'
-      summary: Get all conversations for signed in user.
-      tags:
-      - Conversations
   /conversations/{id}:
     get:
       parameters:

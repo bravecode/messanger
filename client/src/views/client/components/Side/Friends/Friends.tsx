@@ -8,15 +8,10 @@ import { FriendsItem } from './FriendsItem';
 
 const Friends: React.FC = () => {
     const { friends } = useSelector((store: IStore) => store.relationship);
-    const { conversations } = useSelector((store: IStore) => store.conversations);
+    const { activeConversationID } = useSelector((store: IStore) => store.messages);
 
     if (!friends.length) {
         return null;
-    }
-
-    // Helpers
-    const getLastMessage = (relationID: number): string => {
-        return conversations.find((conversation) => conversation.relationID === relationID)?.lastMessage ?? 'Say hello to your friend.';
     }
 
     return (
@@ -24,9 +19,12 @@ const Friends: React.FC = () => {
             {
                 friends.map((friend) =>
                     <FriendsItem
+                        key={friend.ID}
+                        requestID={friend.ID}
                         userName={friend.userName}
-                        lastMessage={getLastMessage(friend.ID)}
+                        lastMessage={friend.lastMessage ?? ''}
                         online={friend.online}
+                        active={activeConversationID === friend.ID}
                     />
                 )
             }

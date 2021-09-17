@@ -34,27 +34,3 @@ func CreateConversationMessage(id uint, message string, userID uint) error {
 
 	return nil
 }
-
-func CreateConversation(id uint, userA uint, userB uint) error {
-	_, err := database.Conn.Do(
-		"SADD",
-		fmt.Sprintf("users:%d:conversations", userA),
-		id,
-	)
-
-	if err != nil {
-		return errors.New("something went wrong while opening conversation (1)")
-	}
-
-	_, err = database.Conn.Do(
-		"SADD",
-		fmt.Sprintf("users:%d:conversations", userB),
-		id,
-	)
-
-	if err != nil {
-		return errors.New("something went wrong while opening conversation (2)")
-	}
-
-	return nil
-}

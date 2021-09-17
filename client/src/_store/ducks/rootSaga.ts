@@ -4,7 +4,6 @@ import authSaga from "./auth/saga";
 import relationshipSaga from "./relationship/saga";
 import searchSaga from "./search/saga";
 import socketSaga from "./socket/saga";
-import conversationsSaga from './conversations/saga';
 import messagesSaga from './messages/saga';
 
 export default function* rootSaga() {
@@ -13,7 +12,6 @@ export default function* rootSaga() {
         fork(socketSaga),
         fork(relationshipSaga),
         fork(searchSaga),
-        fork(conversationsSaga),
         fork(messagesSaga)
     ]);
 }

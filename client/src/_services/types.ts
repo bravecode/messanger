@@ -18,11 +18,6 @@ export interface TypesAuthResponse {
   user: TypesUserResponse;
 }
 
-export interface TypesConversation {
-  last_message?: string;
-  relationship_id: number;
-}
-
 export interface TypesConversationMessage {
   author: boolean;
   content: string;
@@ -64,6 +59,7 @@ export interface TypesRelationshipResponse {
 
 export interface TypesRelationshipResponseItem {
   id: number;
+  last_message?: string;
   online?: boolean;
   user_id: number;
   username: string;

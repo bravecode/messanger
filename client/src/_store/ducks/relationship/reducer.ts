@@ -17,6 +17,7 @@ export interface IRelationship {
     userID: number;
     userName: string;
     online: boolean;
+    lastMessage?: string;
 }
 
 const defaultState: IRelationshipState = {

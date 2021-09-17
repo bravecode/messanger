@@ -3,7 +3,6 @@ package services
 import (
 	"encoding/json"
 	"fmt"
-	"messanger/database"
 	"messanger/models"
 	"messanger/types"
 	"strconv"
@@ -11,7 +10,6 @@ import (
 
 	"github.com/antoniodipinto/ikisocket"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gomodule/redigo/redis"
 )
 
 func SetupConversationSocketListeners() {
@@ -27,47 +25,6 @@ func SetupConversationSocketListeners() {
 		}
 
 		ep.Kws.Fire(event.Event, []byte(ep.Data))
-	})
-
-	ikisocket.On(string(types.ConversationOpenEvent), func(ep *ikisocket.EventPayload) {
-		message := &types.ConversationOpenDTO{}
-
-		if err := json.Unmarshal(ep.Data, message); err != nil {
-			fmt.Println("Cannot parse JSON. (2)")
-
-			return
-		}
-
-		relationship, err := models.FindRelationshipByID(message.RelationshipID)
-
-		if err != nil {
-			fmt.Println("Relationship with specified ID does not exist.")
-
-			return
-		}
-
-		err = models.CreateConversation(relationship.ID, relationship.UserA, relationship.UserB)
-
-		if err != nil {
-			fmt.Println(err)
-
-			return
-		}
-
-		response, err := json.Marshal(&types.Conversation{
-			RelationshipID: relationship.ID,
-		})
-
-		if err != nil {
-			fmt.Println("Could not fetch specified conversation.")
-
-			return
-		}
-
-		ep.Kws.EmitToList(
-			[]string{Users[relationship.UserA], Users[relationship.UserB]},
-			[]byte(response),
-		)
 	})
 
 	ikisocket.On(string(types.ConversationMessageEvent), func(ep *ikisocket.EventPayload) {
@@ -129,55 +86,6 @@ func SetupConversationSocketListeners() {
 			)
 		}
 	})
-}
-
-// List Conversations
-// @Summary Get all conversations for signed in user.
-// @Tags Conversations
-// @Produce json
-// @Success 200 {array} types.Conversation
-// @Failure 400 {object} types.ErrorResponse
-// @Router /conversations [get]
-func GetConversations(c *fiber.Ctx) error {
-	currentUserID := c.Locals("USER_ID").(uint)
-
-	// Get Relationship IDs
-	relations, err := redis.Ints(
-		database.Conn.Do(
-			"SMEMBERS",
-			fmt.Sprintf("users:%d:conversations", currentUserID),
-		),
-	)
-
-	if err != nil {
-		return c.Status(400).JSON(&types.ErrorResponse{
-			Errors: []string{
-				"Could not fetch your conversations.",
-			},
-		})
-	}
-
-	// Get Conversations
-	response := []types.Conversation{}
-
-	for _, relation := range relations {
-		relationshipID := uint(relation)
-		messages := models.GetConversationMessages(relationshipID)
-
-		lastMessage := ""
-		if len(messages) > 0 {
-			lastMessage = messages[len(messages)-1]
-			split := strings.SplitN(lastMessage, ":", 2)
-			lastMessage = split[1]
-		}
-
-		response = append(response, types.Conversation{
-			RelationshipID: relationshipID,
-			LastMessage:    lastMessage,
-		})
-	}
-
-	return c.JSON(response)
 }
 
 // Get Conversation Messages

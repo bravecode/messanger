@@ -138,34 +138,6 @@ var doc = `{
                 }
             }
         },
-        "/conversations": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Conversations"
-                ],
-                "summary": "Get all conversations for signed in user.",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/types.Conversation"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/types.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/conversations/{id}": {
             "get": {
                 "produces": [
@@ -390,20 +362,6 @@ var doc = `{
                 }
             }
         },
-        "types.Conversation": {
-            "type": "object",
-            "required": [
-                "relationship_id"
-            ],
-            "properties": {
-                "last_message": {
-                    "type": "string"
-                },
-                "relationship_id": {
-                    "type": "integer"
-                }
-            }
-        },
         "types.ConversationMessage": {
             "type": "object",
             "required": [
@@ -539,6 +497,9 @@ var doc = `{
             "properties": {
                 "id": {
                     "type": "integer"
+                },
+                "last_message": {
+                    "type": "string"
                 },
                 "online": {
                     "type": "boolean"
