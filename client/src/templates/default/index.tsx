@@ -1,18 +1,17 @@
 import React, { useEffect } from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IStore } from '_store';
 import logoPath from '_assets/svg/logo.svg';
 import { getProfileRequest } from '_store/ducks/auth/actions';
 import { connectRequest } from '_store/ducks/socket/actions';
-
-// Views
-import Welcome from 'views/welcome';
-import Messanger from 'views/messanger';
 import { Spinner } from '_components/spinner/Spinner';
 import { getRelationshipsRequest, updateUserStatus } from '_store/ducks/relationship/actions';
 import { getConversationMessagesRequest } from '_store/ducks/messages/actions';
+
+// Views
+import Client from 'views/client';
 
 const TemplateDefault: React.FC = () => {
     // Store
@@ -30,6 +29,7 @@ const TemplateDefault: React.FC = () => {
         if (user !== undefined && localStorage.getItem('token') && !socketPending) {
             dispatch(connectRequest(user.ID));
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, dispatch]);
 
     useEffect(() => {
@@ -76,25 +76,15 @@ const TemplateDefault: React.FC = () => {
     }
 
     return (
-        <div className="font-Poppins h-screen w-screen bg-gray-200">
+        <div className="h-screen w-screen relative">
     
-            <nav className="p-5 relative top-0 inset-x-0 flex items-center justify-between">
+            <nav className="p-5 absolute top-0 inset-x-0 flex items-center justify-between">
                 <div className="h-16 w-16 flex items-center justify-center bg-black">
                     <img src={logoPath} alt="Bravecode Logo - Lion" />
                 </div>
-                <div>
-                    
-                </div>
             </nav>
     
-            <main className="container mx-auto bg-white rounded-lg">
-    
-                <Switch>
-                    <Route exact path="/welcome" component={Welcome} />
-                    <Route exact path="/" component={Messanger} />
-                </Switch>
-    
-            </main>
+            <Client />
     
         </div>
     );

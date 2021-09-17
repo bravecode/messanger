@@ -1,5 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit"
-import { searchUsersError, searchUsersRequest, searchUsersSuccess } from "./actions"
+import { searchUsersError, searchUsersRequest, searchUsersSuccess, setSearchResults } from "./actions"
 
 export interface ISearchState {
     users: ISearchUser[];
@@ -31,6 +31,11 @@ export default createReducer(defaultState, (builder) => {
         .addCase(searchUsersSuccess, (state, { payload }) => {
             state.pending = false;
             state.users = payload;
+        })
+        .addCase(setSearchResults, (state, { payload }) => {
+            state.users = payload;
+            state.errors = undefined;
+            state.pending = false;
         })
         .addDefaultCase(() => {})
 })

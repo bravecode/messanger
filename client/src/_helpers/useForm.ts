@@ -14,7 +14,7 @@ function useForm<T> ({
     initialData
 }: IUseFormProps<T>): IUseFormResult<T> {
     const [data, setData] = useState<T>(initialData);
-    
+
     // Handlers
     const onInputChange = (e: React.FormEvent<HTMLInputElement>) => {
         const { name, value } = e.currentTarget;
