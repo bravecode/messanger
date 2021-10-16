@@ -1,5 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
+
+// Components
 import { Message } from './Message';
 
 export interface IMessageGroupProps {
@@ -15,6 +17,7 @@ const MessageGroup: React.FC<IMessageGroupProps> = ({
     messages,
     type
 }) => {
+    // Styles
     const _containerStyles = classNames({
         'flex items-end gap-2.5 my-2.5': true,
         'flex-row-reverse': type === 'sent'

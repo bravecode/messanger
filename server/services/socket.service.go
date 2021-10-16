@@ -21,6 +21,8 @@ var Users = map[uint]string{}
 // @Success 200 {object} types.SocketResponse
 // @Success 200 {object} types.ConversationMessageDTO
 // @Success 200 {object} types.ConversationOpenDTO
+// @Success 200 {object} types.GameChoiceDTO
+// @Success 200 {object} types.GameResult
 func SocketConnection(kws *ikisocket.Websocket) {
 	// Connect userID & socketID
 	userID, err := strconv.ParseInt(kws.Params("id"), 10, 32)

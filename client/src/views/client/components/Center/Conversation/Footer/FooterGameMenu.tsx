@@ -1,13 +1,20 @@
 import React from 'react';
-import { Emoji } from '_components/emoji/Emoji';
+
+import { makeGameMove, TGameChoice } from '_services/game.service';
+
+// Components
 import { FooterGameMenuItem } from './FooterGameMenuItem';
 
 export interface IFooterGameMenuProps {
+    relationshipID: number;
     open?: boolean;
+    onClose?: () => void;
 }
 
 const FooterGameMenu: React.FC<IFooterGameMenuProps> = ({
-    open
+    relationshipID,
+    open,
+    onClose
 }) => {
     if (!open) {
         return null;
@@ -15,7 +22,30 @@ const FooterGameMenu: React.FC<IFooterGameMenuProps> = ({
 
     // Handlers
     const handleGameMenuItemSelect = (value: string) => {
-        console.log(value);
+        const choice = translateUserChoice(value);
+
+        if (!choice) return;
+
+        makeGameMove(relationshipID, choice);
+
+        onClose && onClose();
+    }
+
+    // Helpers
+    const translateUserChoice = (value: string): TGameChoice | undefined => {
+        if (value === "👊") {
+            return 'rock';
+        }
+
+        if (value === "✋") {
+            return 'paper';
+        }
+
+        if (value === "✌️") {
+            return 'scissors';
+        }
+
+        return undefined;
     }
 
     return (

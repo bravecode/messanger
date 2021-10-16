@@ -1,7 +1,11 @@
 import React from 'react';
 import { IoGameController } from "react-icons/io5";
+import { useSelector } from 'react-redux';
+import { IStore } from '_store';
 
 const HeaderGame: React.FC = () => {
+    const { score } = useSelector((store: IStore) => store.game);
+
     return (
         <div className="h-12 relative rounded-l-full bg-custom-gray-lightest">
             <div className="h-12 w-12 rounded-full bg-purple-500 absolute left-0 top-0 flex items-center justify-center">
@@ -13,13 +17,13 @@ const HeaderGame: React.FC = () => {
                         <div className="text-xs absolute left-0 bottom-full mb-0.5 whitespace-nowrap">
                             Your Score:
                         </div>
-                        32
+                        { score.you }
                     </div>
                     <div className="text-xs leading-none">
                         VS
                     </div>
                     <div className="font-semibold text-custom-gray-regular text-lg leading-none">
-                        17
+                        { score.enemy }
                     </div>
                </div>
             </div>

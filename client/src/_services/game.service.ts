@@ -1,11 +1,13 @@
 import rawStore from '_store';
-import { TypesConversationMessageDTO, TypesSocketEvent } from './types';
+import { TypesGameChoiceDTO, TypesSocketEvent } from './types';
 
 export {
-    sendMessage
+    makeGameMove
 }
 
-function sendMessage(relationshipID: number, content: string) {
+export type TGameChoice = 'paper' | 'rock' | 'scissors';
+
+function makeGameMove(relationshipID: number, choice: TGameChoice) {
     const connection = rawStore.getState().socket.connection;
 
     if (!connection) {
@@ -15,12 +17,12 @@ function sendMessage(relationshipID: number, content: string) {
     }
 
     const event: TypesSocketEvent = {
-        event: 'CONVERSATION:MESSAGE'
+        event: 'GAME:CHOICE'
     }
 
-    const data: TypesConversationMessageDTO = {
-        relationship_id: relationshipID,
-        content
+    const data: TypesGameChoiceDTO = {
+        choice: choice,
+        relationship_id: relationshipID
     }
 
     connection.send(

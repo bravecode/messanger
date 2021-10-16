@@ -125,7 +125,7 @@ func SetupGameSocketListeners() {
 				)
 			}
 		} else if gameResult == -1 {
-			models.DecreaseScore(relationship.ID, currentUserID)
+			models.IncreaseScore(relationship.ID, currentGame.UserID)
 
 			ev := &types.GameResult{
 				Event:          string(types.GameResultEvent),

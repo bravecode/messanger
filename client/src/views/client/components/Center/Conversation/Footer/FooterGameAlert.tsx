@@ -18,7 +18,7 @@ const FooterGameAlert: React.FC<IFooterGameAlertProps> = ({
                 <IoAlert size="14px" color="inherit" />
             </div>
             <div className="bg-custom-gray-lightest h-6 pr-2.5 pl-9 rounded-l-full rounded-r-md text-xs flex items-center text-black">
-                Krzysztof started new game. <span className="text-purple-500 pl-1">Your turn.</span>
+                New game has been started. <span className="text-purple-500 pl-1">Your turn.</span>
             </div>
         </div>
     );

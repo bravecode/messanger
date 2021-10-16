@@ -12,12 +12,14 @@ import { getConversationMessagesRequest } from '_store/ducks/messages/actions';
 
 // Views
 import Client from 'views/client';
+import { updateGameScore, startGame } from '_store/ducks/game/actions';
 
 const TemplateDefault: React.FC = () => {
     // Store
     const dispatch = useDispatch();
     const { user, pending } = useSelector((store: IStore) => store.auth);
     const { connection, connected, pending: socketPending } = useSelector((store: IStore) => store.socket);
+    const { activeConversationID } = useSelector((store: IStore) => store.messages);
 
     // Validate if user is logged in
     useEffect(() => {
@@ -36,19 +38,17 @@ const TemplateDefault: React.FC = () => {
         if (connection) {
             connection.addEventListener('message', (e) => {
                 if (!e.data) return;
-    
+
                 const data = JSON.parse(e.data);
-    
-                console.log(data);
 
                 if (data.event === "RELATIONSHIP:REFRESH") {
-                    dispatch(getRelationshipsRequest())
+                    dispatch(getRelationshipsRequest());
                 }
 
                 if (data.event === "CONVERSATION:MESSAGE:RECEIVED") {
                     const { relationshipID } = data;
 
-                    dispatch(getConversationMessagesRequest(relationshipID))
+                    dispatch(getConversationMessagesRequest(relationshipID));
                 }
 
                 if (data.event === "USER:STATUS") {
@@ -57,11 +57,41 @@ const TemplateDefault: React.FC = () => {
                     dispatch(updateUserStatus({
                         userID: id,
                         online
-                    }))
+                    }));
                 }
             })
         }
     }, [connection, dispatch])
+
+    useEffect(() => {
+        if (connection) {
+            connection.addEventListener('message', (e) => {
+                if (!e.data) return;
+
+                const data = JSON.parse(e.data);
+
+                if (data.event === "GAME:START") {
+                    if (data.relationshipID !== activeConversationID) {
+                        return;
+                    }
+
+                    console.log('START');
+
+                    dispatch(startGame());
+                }
+
+                if (data.event === "GAME:RESULT") {
+                    if (data.relationshipID !== activeConversationID) {
+                        return;
+                    }
+
+                    console.log('FINISH');
+
+                    dispatch(updateGameScore(data.score));
+                }
+            })
+        }
+    }, [connection, dispatch, activeConversationID])
 
     if (pending || socketPending) {
         return (

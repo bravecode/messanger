@@ -31,21 +31,23 @@ const FooterEmoji: React.FC<IFooterEmojiProps> = ({
 
     // Styles
     const _pickerButtonStyles = classNames({
-        'h-10 w-10 rounded-md flex items-center justify-center flex-shrink-0 relative hover:bg-purple-500 hover:text-white': true,
+        'h-10 w-10 rounded-md flex items-center justify-center flex-shrink-0 hover:bg-purple-500 hover:text-white': true,
         'text-custom-gray-dark bg-custom-gray-lightest': !open,
         'bg-purple-500 text-white': open
     });
 
     return (
         <>
-            <button className={_pickerButtonStyles} onClick={handleEmojiPickerToggle}>
+            <div className="h-10 w-10 relative">
                 <EmojiPicker 
                     open={open}
                     onSelect={handleEmojiPickerSelect}
                 />
 
-                <IoHappy color="inherit" />
-            </button>
+                <button className={_pickerButtonStyles} onClick={handleEmojiPickerToggle}>
+                    <IoHappy color="inherit" />
+                </button>
+            </div>
             <button className="h-10 w-10 rounded-md flex items-center justify-center text-custom-gray-dark bg-custom-gray-lightest flex-shrink-0 hover:bg-purple-500 hover:text-white" onClick={onThumbsUp}>
                 <IoThumbsUp color="inherit" />
             </button>

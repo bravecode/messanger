@@ -1,12 +1,21 @@
 import classNames from 'classnames';
 import React, { useState } from 'react';
 import { IoGameController } from 'react-icons/io5';
+import { useSelector } from 'react-redux';
+import { IStore } from '_store';
 
 // Components
 import { FooterGameAlert } from './FooterGameAlert';
 import { FooterGameMenu } from './FooterGameMenu';
 
-const FooterGame: React.FC = () => {
+export interface IFooterGameProps {
+    relationshipID: number;
+}
+
+const FooterGame: React.FC<IFooterGameProps> = ({
+    relationshipID
+}) => {
+    const { newGame } = useSelector((store: IStore) => store.game);
     const [open, setOpen] = useState(false);
 
     // Handlers
@@ -15,20 +24,22 @@ const FooterGame: React.FC = () => {
     }
 
     // Styles
-    const _containerStyles = classNames({
-        'h-10 w-10 rounded-md flex items-center justify-center flex-shrink-0 relative hover:bg-purple-500 hover:text-white': true,
+    const _buttonStyles = classNames({
+        'h-10 w-10 rounded-md flex items-center justify-center flex-shrink-0 hover:bg-purple-500 hover:text-white': true,
         'text-custom-gray-dark bg-custom-gray-lightest': !open,
         'bg-purple-500 text-white': open
     });
 
     return (
-        <button className={_containerStyles} onClick={handleGameMenuToggle}>
-            <FooterGameAlert visible />
+        <div className="h-10 w-10 relative">
+            <FooterGameAlert visible={newGame} />
 
-            <FooterGameMenu open={open} />
+            <FooterGameMenu relationshipID={relationshipID} open={open} onClose={() => setOpen(false)} />
 
-            <IoGameController color="inherit" />
-        </button>
+            <button className={_buttonStyles} onClick={handleGameMenuToggle}>
+                <IoGameController color="inherit" />
+            </button>
+        </div>
     );
 }
 

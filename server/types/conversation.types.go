@@ -15,7 +15,8 @@ type Conversation struct {
 }
 
 type ConversationMessages struct {
-	Messages []string `json:"messages" validate:"required"`
+	Score    GameScore             `json:"score" validate:"required"`
+	Messages []ConversationMessage `json:"messages" validate:"required"`
 }
 
 type ConversationMessage struct {

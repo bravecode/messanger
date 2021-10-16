@@ -22,7 +22,7 @@ const Friends: React.FC = () => {
                         key={friend.ID}
                         requestID={friend.ID}
                         userName={friend.userName}
-                        lastMessage={friend.lastMessage ?? ''}
+                        lastMessage={friend.lastMessage?.length ? friend.lastMessage : 'Say hello to your friend.'}
                         online={friend.online}
                         active={activeConversationID === friend.ID}
                     />

@@ -3,7 +3,8 @@ import { AxiosError, AxiosResponse } from "axios";
 import { SagaIterator } from "redux-saga";
 import { all, call, fork, put, takeLatest } from "redux-saga/effects";
 import { getConversationMessages } from "_services/conversations.service";
-import { TypesConversationMessage, TypesErrorResponse } from "_services/types";
+import { TypesConversationMessages, TypesErrorResponse } from "_services/types";
+import { updateGameScore } from "../game/actions";
 import { getConversationMessagesError, getConversationMessagesRequest, getConversationMessagesSuccess } from "./actions";
 import { IMessageGroup } from "./reducer";
 
@@ -13,14 +14,13 @@ function* handleGetConversationMessagesRequest(action: Action): SagaIterator {
         if (getConversationMessagesRequest.match(action)) {
             const conversationID = action.payload;
 
-            const result: AxiosResponse<TypesConversationMessage[]> = yield call(getConversationMessages, conversationID);
+            const result: AxiosResponse<TypesConversationMessages> = yield call(getConversationMessages, conversationID);
 
-            const data: IMessageGroup[] = result.data.reduce((prev, current, i): IMessageGroup[] => {
+            const data: IMessageGroup[] = result.data.messages.reduce((prev, current, i): IMessageGroup[] => {
                 if (prev.length === 0) {
                     return [
                         {
                             isAuthor: current.author,
-                            authorName: current.author ? 'Chris' : 'Other User',
                             messages: [current.content]
                         }
                     ]
@@ -45,13 +45,13 @@ function* handleGetConversationMessagesRequest(action: Action): SagaIterator {
                     prevGroup,
                     {
                         isAuthor: current.author,
-                        authorName: current.author ? 'Chris' : 'Other User',
                         messages: [current.content]
                     }
                 ];
             }, [] as IMessageGroup[])
 
-            yield put(getConversationMessagesSuccess(data))
+            yield put(getConversationMessagesSuccess(data));
+            yield put(updateGameScore(result.data.score));
         }
     } catch (err) {
         const typed: AxiosError<TypesErrorResponse> = err;

@@ -160,10 +160,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/types.ConversationMessage"
-                            }
+                            "$ref": "#/definitions/types.ConversationMessages"
                         }
                     },
                     "400": {
@@ -392,6 +389,24 @@ var doc = `{
                 }
             }
         },
+        "types.ConversationMessages": {
+            "type": "object",
+            "required": [
+                "messages",
+                "score"
+            ],
+            "properties": {
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.ConversationMessage"
+                    }
+                },
+                "score": {
+                    "$ref": "#/definitions/types.GameScore"
+                }
+            }
+        },
         "types.ConversationOpenDTO": {
             "type": "object",
             "required": [
@@ -411,6 +426,59 @@ var doc = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "types.GameChoiceDTO": {
+            "type": "object",
+            "required": [
+                "choice",
+                "relationship_id"
+            ],
+            "properties": {
+                "choice": {
+                    "type": "string"
+                },
+                "relationship_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "types.GameResult": {
+            "type": "object",
+            "required": [
+                "event",
+                "relationship_id",
+                "result",
+                "score"
+            ],
+            "properties": {
+                "event": {
+                    "type": "string"
+                },
+                "relationship_id": {
+                    "type": "integer"
+                },
+                "result": {
+                    "type": "integer"
+                },
+                "score": {
+                    "$ref": "#/definitions/types.GameScore"
+                }
+            }
+        },
+        "types.GameScore": {
+            "type": "object",
+            "required": [
+                "foe",
+                "you"
+            ],
+            "properties": {
+                "foe": {
+                    "type": "integer"
+                },
+                "you": {
+                    "type": "integer"
                 }
             }
         },

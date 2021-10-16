@@ -93,7 +93,7 @@ func SetupConversationSocketListeners() {
 // @Tags Conversations
 // @Produce json
 // @Param id path int true "Relationship ID"
-// @Success 200 {array} types.ConversationMessage
+// @Success 200 {object} types.ConversationMessages
 // @Failure 400 {object} types.ErrorResponse
 // @Router /conversations/{id} [get]
 func GetConversationMessages(c *fiber.Ctx) error {
@@ -144,5 +144,15 @@ func GetConversationMessages(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(result)
+	// Fetch Score
+	yourScore := models.GetScore(relationship.ID, currentUserID)
+	foeScore := models.GetScore(relationship.ID, getOtherUserID(relationship, currentUserID))
+
+	return c.JSON(&types.ConversationMessages{
+		Score: types.GameScore{
+			You: yourScore,
+			Foe: foeScore,
+		},
+		Messages: result,
+	})
 }

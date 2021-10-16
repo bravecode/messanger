@@ -1,34 +1,52 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { makeGameAction } from "./actions";
+import { updateGameScore, getGameInfoError, getGameInfoRequest, getGameInfoSuccess, startGame } from "./actions";
 
-// Game State for active conversation
 export interface IGameState {
-    score?: IGameScore;
-    currentGame?: IGameCurrentGame;
-    pending: boolean;
+    score: IGameScore;
+    newGame?: boolean;
+    pending?: boolean;
     errors?: string[];
 }
 
 export interface IGameScore {
-    yourScore: number;
-    foeScore: number;
+    you: number;
+    enemy: number;
 }
 
-export interface IGameCurrentGame {
-    status: TGameStatus;
-    yourChoice?: string;
+const defaultScore: IGameScore = {
+    you: 0,
+    enemy: 0
 }
-
-export type TGameStatus = 'none' | 'your_move' | 'foe_move' | 'done';
 
 const defaultState: IGameState = {
-    currentGame: undefined,
-    score: undefined,
+    score: defaultScore,
+    newGame: undefined,
     pending: false,
     errors: undefined
 }
 
 export default createReducer(defaultState, (builder) => {
     builder
+        .addCase(getGameInfoRequest, (state) => {
+            state.pending = true;
+            state.errors = undefined;
+            state.score = defaultScore;
+        })
+        .addCase(getGameInfoSuccess, (state, { payload }) => {
+            state.pending = false;
+            state.score = payload;
+        })
+        .addCase(getGameInfoError, (state, { payload }) => {
+            state.pending = false;
+            state.errors = payload;
+        })
+        .addCase(startGame, (state) => {
+            state.newGame = true;
+        })
+        .addCase(updateGameScore, (state, { payload }) => {
+            state.newGame = false;
+            state.score.you = payload.you;
+            state.score.enemy = payload.foe;
+        })
         .addDefaultCase(() => {})
-})
+});

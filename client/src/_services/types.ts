@@ -28,12 +28,34 @@ export interface TypesConversationMessageDTO {
   relationship_id: number;
 }
 
+export interface TypesConversationMessages {
+  messages: TypesConversationMessage[];
+  score: TypesGameScore;
+}
+
 export interface TypesConversationOpenDTO {
   relationship_id: number;
 }
 
 export interface TypesErrorResponse {
   errors?: string[];
+}
+
+export interface TypesGameChoiceDTO {
+  choice: string;
+  relationship_id: number;
+}
+
+export interface TypesGameResult {
+  event: string;
+  relationship_id: number;
+  result: number;
+  score: TypesGameScore;
+}
+
+export interface TypesGameScore {
+  foe: number;
+  you: number;
 }
 
 export interface TypesLoginDTO {

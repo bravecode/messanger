@@ -10,7 +10,6 @@ export interface IMessagesState {
 
 export interface IMessageGroup {
     isAuthor: boolean;
-    authorName: string;
     messages: string[]
 }
 

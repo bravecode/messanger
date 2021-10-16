@@ -21,7 +21,7 @@ function* handleGetRelationshipsRequest(): SagaIterator {
                 userID: r.user_id,
                 online: r.online ?? false,
                 userName: r.username,
-                lastMessage: r.last_message ?? 'Say hello to your friend.'
+                lastMessage: r.last_message ?? ''
             }
         });
 
