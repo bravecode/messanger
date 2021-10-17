@@ -3,17 +3,14 @@ import { IoAlert, IoClose } from 'react-icons/io5';
 import classNames from 'classnames';
 
 export interface IAlertProps {
-    variant: TAlertVariant;
     title: string;
     content: string | string[];
     className?: string;
     onClose?: () => void;
 }
 
-export type TAlertVariant = 'success' | 'warning' | 'error';
 
 const Alert: React.FC<IAlertProps> = ({
-    variant,
     title,
     content,
     className,

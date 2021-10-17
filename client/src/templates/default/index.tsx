@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { Helmet } from 'react-helmet';
 
 import { IStore } from '_store';
 import logoPath from '_assets/svg/logo.svg';
@@ -107,6 +108,10 @@ const TemplateDefault: React.FC = () => {
 
     return (
         <div className="h-screen w-screen relative">
+
+            <Helmet>
+                <title>Messanger | Client</title>
+            </Helmet>
     
             <nav className="p-5 absolute top-0 inset-x-0 flex items-center justify-between">
                 <div className="h-16 w-16 flex items-center justify-center bg-black">

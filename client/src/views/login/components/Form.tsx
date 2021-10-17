@@ -47,7 +47,6 @@ const Form: React.FC<IFormProps> = ({
                 !!errors?.length && (
                     <div className="mb-2.5">
                         <Alert
-                            variant="error"
                             title="Oops!"
                             content={errors}
                         />
@@ -67,12 +66,12 @@ const Form: React.FC<IFormProps> = ({
                 <Input type="password" name="password" onChange={onInputChange} value={data.password} />
             </div>
             <div className="mb-2 5">
-                <button className="w-full bg-blue-500 text-white text-sm border-none outline-none rounded-lg h-10 hover:bg-blue-400">
+                <button className="w-full bg-purple-500 text-white text-sm border-none outline-none rounded-lg h-10 hover:bg-purple-400">
                     { pending ? <Spinner className="w-full text-white" /> : <>Login</> }
                 </button>
             </div>
             <div className="mb-2 5">
-                <Link to="/auth/register" className="text-xs hover:text-blue-500" onClick={onErrorsClear}>
+                <Link to="/auth/register" className="text-xs hover:text-purple-500" onClick={onErrorsClear}>
                     Don't have an account? Sign Up.
                 </Link>
             </div>
