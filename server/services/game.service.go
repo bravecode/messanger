@@ -124,6 +124,12 @@ func SetupGameSocketListeners() {
 					[]byte(event),
 				)
 			}
+
+			user, err := models.FindUserByID(currentUserID)
+
+			if err == nil {
+				models.CreateConversationSystemMessage(relationship.ID, fmt.Sprintf("Rock, Paper, Scissors - %s has won the game!", user.Username))
+			}
 		} else if gameResult == -1 {
 			models.IncreaseScore(relationship.ID, currentGame.UserID)
 
@@ -164,6 +170,12 @@ func SetupGameSocketListeners() {
 					[]byte(event),
 				)
 			}
+
+			user, err := models.FindUserByID(currentGame.UserID)
+
+			if err == nil {
+				models.CreateConversationSystemMessage(relationship.ID, fmt.Sprintf("Rock, Paper, Scissors - %s has won the game!", user.Username))
+			}
 		} else {
 			ev := &types.GameResult{
 				Event:          string(types.GameResultEvent),
@@ -183,6 +195,8 @@ func SetupGameSocketListeners() {
 					[]byte(event),
 				)
 			}
+
+			models.CreateConversationSystemMessage(relationship.ID, "Rock, Paper, Scissors - DRAW! Learn to play noobs.")
 		}
 
 		models.DeleteCurrentGame(relationship.ID)

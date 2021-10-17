@@ -14,6 +14,7 @@ func FormatValidatorErrors(err error) []string {
 
 		// Get Field's Name
 		split := strings.Split(err.StructNamespace(), ".")
+
 		message += "Field " + split[len(split)-1] + " "
 
 		switch err.Tag() {

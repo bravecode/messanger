@@ -348,7 +348,8 @@
             "type": "object",
             "required": [
                 "author",
-                "content"
+                "content",
+                "system_message"
             ],
             "properties": {
                 "author": {
@@ -356,6 +357,9 @@
                 },
                 "content": {
                     "type": "string"
+                },
+                "system_message": {
+                    "type": "boolean"
                 }
             }
         },
@@ -378,7 +382,8 @@
             "type": "object",
             "required": [
                 "messages",
-                "score"
+                "score",
+                "your_turn"
             ],
             "properties": {
                 "messages": {
@@ -389,6 +394,9 @@
                 },
                 "score": {
                     "$ref": "#/definitions/types.GameScore"
+                },
+                "your_turn": {
+                    "type": "boolean"
                 }
             }
         },

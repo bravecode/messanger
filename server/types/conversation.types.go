@@ -16,12 +16,14 @@ type Conversation struct {
 
 type ConversationMessages struct {
 	Score    GameScore             `json:"score" validate:"required"`
+	YourTurn bool                  `json:"your_turn" validate:"required"`
 	Messages []ConversationMessage `json:"messages" validate:"required"`
 }
 
 type ConversationMessage struct {
-	Author  bool   `json:"author" validate:"required"`
-	Content string `json:"content" validate:"required"`
+	SystemMessage bool   `json:"system_message" validate:"required"`
+	Author        bool   `json:"author" validate:"required"`
+	Content       string `json:"content" validate:"required"`
 }
 
 type ConversationMessageReceived struct {

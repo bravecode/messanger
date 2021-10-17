@@ -62,7 +62,4 @@ func SocketConnection(kws *ikisocket.Websocket) {
 
 		}
 	}
-
-	//Write welcome message
-	kws.Emit([]byte("Connected"))
 }

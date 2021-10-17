@@ -56,8 +56,13 @@ func RelationshipList(c *fiber.Ctx) error {
 			lastMessage := ""
 			if len(messages) > 0 {
 				lastMessage = messages[len(messages)-1]
-				split := strings.SplitN(lastMessage, ":", 2)
-				lastMessage = split[1]
+				split := strings.SplitN(lastMessage, ":", 3)
+
+				if len(split) == 0 {
+					lastMessage = ""
+				} else {
+					lastMessage = split[2]
+				}
 			}
 
 			if r.Status == models.Friends {

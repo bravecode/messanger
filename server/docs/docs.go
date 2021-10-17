@@ -363,7 +363,8 @@ var doc = `{
             "type": "object",
             "required": [
                 "author",
-                "content"
+                "content",
+                "system_message"
             ],
             "properties": {
                 "author": {
@@ -371,6 +372,9 @@ var doc = `{
                 },
                 "content": {
                     "type": "string"
+                },
+                "system_message": {
+                    "type": "boolean"
                 }
             }
         },
@@ -393,7 +397,8 @@ var doc = `{
             "type": "object",
             "required": [
                 "messages",
-                "score"
+                "score",
+                "your_turn"
             ],
             "properties": {
                 "messages": {
@@ -404,6 +409,9 @@ var doc = `{
                 },
                 "score": {
                     "$ref": "#/definitions/types.GameScore"
+                },
+                "your_turn": {
+                    "type": "boolean"
                 }
             }
         },

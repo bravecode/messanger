@@ -17,7 +17,9 @@ type User struct {
 }
 
 func GetNextUserID() uint {
-	index, err := redis.Int(database.Conn.Do(
+	c := database.DBPool.Get()
+
+	index, err := redis.Int(c.Do(
 		"GET",
 		"users:index",
 	))
@@ -25,25 +27,33 @@ func GetNextUserID() uint {
 	if err != nil || index == 0 {
 		index = 1
 
-		database.Conn.Do(
+		c.Do(
 			"SET",
 			"users:index",
 			index,
 		)
 	}
 
+	c.Close()
+
 	return uint(index)
 }
 
 func IncreaseNextUserID() {
-	database.Conn.Do(
+	c := database.DBPool.Get()
+
+	c.Do(
 		"INCR",
 		"users:index",
 	)
+
+	c.Close()
 }
 
 func CreateUser(values *User) error {
-	hmset, err := database.Conn.Do(
+	c := database.DBPool.Get()
+
+	hmset, err := c.Do(
 		"HMSET",
 		fmt.Sprintf("users:%d", values.ID),
 		"ID",
@@ -57,26 +67,32 @@ func CreateUser(values *User) error {
 	)
 
 	if err != nil || hmset == nil {
+		c.Close()
+
 		return errors.New("something went wrong. Try again later 1")
 	}
 
 	// Store Email
-	sadd, err := database.Conn.Do(
+	sadd, err := c.Do(
 		"SADD",
 		fmt.Sprintf("users:email:%s", values.Email),
 		values.ID,
 	)
 
 	if err != nil || sadd == nil {
+		c.Close()
+
 		return errors.New("something went wrong. Try again later 2")
 	}
 
 	// Store Email for search feature
-	_, err = database.Conn.Do(
+	_, err = c.Do(
 		"SET",
 		fmt.Sprintf("users:username:%s", values.Username),
 		values.ID,
 	)
+
+	c.Close()
 
 	if err != nil || sadd == nil {
 		return errors.New("something went wrong. Try again later 3")
@@ -86,10 +102,14 @@ func CreateUser(values *User) error {
 }
 
 func IsUserEmailUnique(email string) error {
-	res, err := redis.Int(database.Conn.Do(
+	c := database.DBPool.Get()
+
+	res, err := redis.Int(c.Do(
 		"SCARD",
 		fmt.Sprintf("users:email:%s", email),
 	))
+
+	c.Close()
 
 	if err != nil || res != 0 {
 		return errors.New("user already exists")
@@ -99,19 +119,25 @@ func IsUserEmailUnique(email string) error {
 }
 
 func FindUserByEmail(email string) (*User, error) {
-	uid, err := redis.Ints(database.Conn.Do(
+	c := database.DBPool.Get()
+
+	uid, err := redis.Ints(c.Do(
 		"SMEMBERS",
 		fmt.Sprintf("users:email:%s", email),
 	))
 
 	if err != nil || len(uid) != 1 {
+		c.Close()
+
 		return nil, errors.New("invalid email or password")
 	}
 
-	u, err := redis.Values(database.Conn.Do(
+	u, err := redis.Values(c.Do(
 		"HGETALL",
 		fmt.Sprintf("users:%d", uid[0]),
 	))
+
+	c.Close()
 
 	if err != nil {
 		return nil, errors.New("invalid email or password")
@@ -128,12 +154,16 @@ func FindUserByEmail(email string) (*User, error) {
 }
 
 func FindUserByID(id uint) (*User, error) {
+	c := database.DBPool.Get()
+
 	u, err := redis.Values(
-		database.Conn.Do(
+		c.Do(
 			"HGETALL",
 			fmt.Sprintf("users:%d", id),
 		),
 	)
+
+	c.Close()
 
 	if err != nil {
 		return nil, errors.New("something went wrong")
@@ -150,19 +180,22 @@ func FindUserByID(id uint) (*User, error) {
 }
 
 func SearchUsersByUsername(name string) ([]*types.UserSearchResponse, error) {
+	c := database.DBPool.Get()
 	result := []*types.UserSearchResponse{}
 
-	users, err := redis.Strings(database.Conn.Do(
+	users, err := redis.Strings(c.Do(
 		"KEYS",
 		fmt.Sprintf("users:username:%s*", name),
 	))
 
 	if err != nil {
+		c.Close()
+
 		return nil, errors.New("something went wrong")
 	}
 
 	for _, k := range users {
-		v, _ := redis.Int(database.Conn.Do(
+		v, _ := redis.Int(c.Do(
 			"GET",
 			k,
 		))
@@ -174,6 +207,8 @@ func SearchUsersByUsername(name string) ([]*types.UserSearchResponse, error) {
 			Username: u.Username,
 		})
 	}
+
+	c.Close()
 
 	return result, nil
 }

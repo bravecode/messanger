@@ -39,6 +39,7 @@ func SetupConversationSocketListeners() {
 		relationship, err := models.FindRelationshipByID(message.RelationshipID)
 
 		if err != nil {
+			fmt.Println(err.Error())
 			fmt.Println("Relationship with specified ID does not exist.")
 
 			return
@@ -65,12 +66,6 @@ func SetupConversationSocketListeners() {
 
 			return
 		}
-
-		// otherUserID := relationship.UserA
-
-		// if currentUserID == otherUserID {
-		// 	otherUserID = relationship.UserB
-		// }
 
 		event := &types.ConversationMessageReceived{
 			Event:          string(types.ConversationMessageReceivedEvent),
@@ -135,24 +130,43 @@ func GetConversationMessages(c *fiber.Ctx) error {
 	result := []types.ConversationMessage{}
 
 	for _, v := range messages {
-		split := strings.SplitN(v, ":", 2)
-		content := split[1]
+		split := strings.SplitN(v, ":", 3)
+		content := split[2]
 
-		result = append(result, types.ConversationMessage{
-			Author:  split[0] == strconv.FormatUint(uint64(currentUserID), 10),
-			Content: content,
-		})
+		if split[0] == "SYS" {
+			result = append(result, types.ConversationMessage{
+				SystemMessage: true,
+				Author:        false,
+				Content:       content,
+			})
+		} else {
+			result = append(result, types.ConversationMessage{
+				SystemMessage: false,
+				Author:        split[1] == strconv.FormatUint(uint64(currentUserID), 10),
+				Content:       content,
+			})
+		}
 	}
 
 	// Fetch Score
 	yourScore := models.GetScore(relationship.ID, currentUserID)
 	foeScore := models.GetScore(relationship.ID, getOtherUserID(relationship, currentUserID))
 
+	// Fetch Current Game & decide if it's user's turn
+	yourTurn := false
+
+	currentGame, err := models.GetCurrentGame(relationship.ID)
+
+	if err == nil && currentGame.UserID != currentUserID {
+		yourTurn = true
+	}
+
 	return c.JSON(&types.ConversationMessages{
 		Score: types.GameScore{
 			You: yourScore,
 			Foe: foeScore,
 		},
+		YourTurn: yourTurn,
 		Messages: result,
 	})
 }

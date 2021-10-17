@@ -9,8 +9,10 @@ import (
 )
 
 func GetConversationMessages(id uint) []string {
+	c := database.DBPool.Get()
+
 	res, _ := redis.Strings(
-		database.Conn.Do(
+		c.Do(
 			"LRANGE",
 			fmt.Sprintf("relationship:%d:messages", id),
 			"1",
@@ -18,15 +20,40 @@ func GetConversationMessages(id uint) []string {
 		),
 	)
 
+	c.Close()
+
 	return res
 }
 
 func CreateConversationMessage(id uint, message string, userID uint) error {
-	_, err := database.Conn.Do(
+	c := database.DBPool.Get()
+
+	_, err := c.Do(
 		"RPUSH",
 		fmt.Sprintf("relationship:%d:messages", id),
-		fmt.Sprintf("%d:%s", userID, message),
+		fmt.Sprintf("%s:%d:%s", "USER", userID, message),
 	)
+
+	c.Close()
+
+	if err != nil {
+		return errors.New("something went wrong")
+	}
+
+	return nil
+}
+
+// Note: This is very poor execution of keeping game history, but I don't have time to implement something better. Maybe another time.
+func CreateConversationSystemMessage(id uint, message string) error {
+	c := database.DBPool.Get()
+
+	_, err := c.Do(
+		"RPUSH",
+		fmt.Sprintf("relationship:%d:messages", id),
+		fmt.Sprintf("%s:%d:%s", "SYS", 0, message),
+	)
+
+	c.Close()
 
 	if err != nil {
 		return errors.New("something went wrong")

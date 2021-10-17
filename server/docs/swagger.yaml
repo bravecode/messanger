@@ -23,9 +23,12 @@ definitions:
         type: boolean
       content:
         type: string
+      system_message:
+        type: boolean
     required:
     - author
     - content
+    - system_message
     type: object
   types.ConversationMessageDTO:
     properties:
@@ -45,9 +48,12 @@ definitions:
         type: array
       score:
         $ref: '#/definitions/types.GameScore'
+      your_turn:
+        type: boolean
     required:
     - messages
     - score
+    - your_turn
     type: object
   types.ConversationOpenDTO:
     properties:

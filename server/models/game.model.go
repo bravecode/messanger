@@ -15,7 +15,9 @@ type Game struct {
 }
 
 func CreateGame(relationshipID uint, userAction string, userID uint) error {
-	_, err := database.Conn.Do(
+	c := database.DBPool.Get()
+
+	_, err := c.Do(
 		"HMSET",
 		fmt.Sprintf("relationship:%d:game", relationshipID),
 		"RelationshipID",
@@ -26,6 +28,8 @@ func CreateGame(relationshipID uint, userAction string, userID uint) error {
 		userID,
 	)
 
+	c.Close()
+
 	if err != nil {
 		return err
 	}
@@ -34,19 +38,25 @@ func CreateGame(relationshipID uint, userAction string, userID uint) error {
 }
 
 func GetCurrentGame(relationshipID uint) (*Game, error) {
-	t, _ := redis.Uint64(database.Conn.Do(
+	c := database.DBPool.Get()
+
+	t, _ := redis.Uint64(c.Do(
 		"HLEN",
 		fmt.Sprintf("relationship:%d:game", relationshipID),
 	))
 
 	if t == 0 {
+		c.Close()
+
 		return nil, errors.New("relationship does not exist")
 	}
 
-	res, err := redis.Values(database.Conn.Do(
+	res, err := redis.Values(c.Do(
 		"HGETALL",
 		fmt.Sprintf("relationship:%d:game", relationshipID),
 	))
+
+	c.Close()
 
 	if err != nil {
 		return nil, errors.New("relationship does not exist")
@@ -63,10 +73,14 @@ func GetCurrentGame(relationshipID uint) (*Game, error) {
 }
 
 func DeleteCurrentGame(relationshipID uint) error {
-	_, err := database.Conn.Do(
+	c := database.DBPool.Get()
+
+	_, err := c.Do(
 		"del",
 		fmt.Sprintf("relationship:%d:game", relationshipID),
 	)
+
+	c.Close()
 
 	if err != nil {
 		return errors.New("relationship does not exist")
@@ -76,30 +90,42 @@ func DeleteCurrentGame(relationshipID uint) error {
 }
 
 func IncreaseScore(relationshipID uint, userID uint) error {
-	database.Conn.Do(
+	c := database.DBPool.Get()
+
+	c.Do(
 		"INCR",
 		fmt.Sprintf("relationship:%d:score:%d", relationshipID, userID),
 	)
+
+	c.Close()
 
 	return nil
 }
 
 func DecreaseScore(relationshipID uint, userID uint) error {
-	database.Conn.Do(
+	c := database.DBPool.Get()
+
+	c.Do(
 		"DECR",
 		fmt.Sprintf("relationship:%d:score:%d", relationshipID, userID),
 	)
+
+	c.Close()
 
 	return nil
 }
 
 func GetScore(relationshipID uint, userID uint) uint {
+	c := database.DBPool.Get()
+
 	res, err := redis.Uint64(
-		database.Conn.Do(
+		c.Do(
 			"GET",
 			fmt.Sprintf("relationship:%d:score:%d", relationshipID, userID),
 		),
 	)
+
+	c.Close()
 
 	if err != nil {
 		return 0
