@@ -1,4 +1,5 @@
 import { createReducer, isAnyOf } from '@reduxjs/toolkit';
+import { logoutSuccess } from '../auth/actions';
 import { acceptError, declineError, getRelationshipsError, getRelationshipsRequest, getRelationshipsSuccess, inviteError, updateUserStatus } from './actions';
 
 export interface IRelationshipState extends IRelationshipsGrouped {
@@ -50,6 +51,9 @@ export default createReducer(defaultState, (builder) => {
             state.friends = payload.friends;
             state.incomingRequests = payload.incomingRequests;
             state.outgoingRequests = payload.outgoingRequests;
+        })
+        .addCase(logoutSuccess, () => {
+            return defaultState;
         })
         .addMatcher(isAnyOf(getRelationshipsError, inviteError, acceptError, declineError), (state, { payload }) => {
             state.pending = false;

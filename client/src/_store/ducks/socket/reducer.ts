@@ -30,8 +30,8 @@ export default createReducer(defaultState, (builder) => {
         .addCase(disconnectRequest, (state) => {
             state.pending = true;
         })
-        .addCase(disconnectSuccess, (state) => {
-            state = defaultState;
+        .addCase(disconnectSuccess, () => {
+            return defaultState;
         })
         .addDefaultCase(() => {})
 });

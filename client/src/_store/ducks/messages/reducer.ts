@@ -1,4 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit';
+import { logoutSuccess } from '../auth/actions';
 import { getConversationMessagesError, getConversationMessagesRequest, getConversationMessagesSuccess } from './actions';
 
 export interface IMessagesState {
@@ -33,6 +34,9 @@ export default createReducer(defaultState, (builder) => {
         .addCase(getConversationMessagesError, (state, { payload }) => {
             state.errors = payload;
             state.pending = false;
+        })
+        .addCase(logoutSuccess, () => {
+            return defaultState;
         })
         .addDefaultCase(() => {})
 });

@@ -37,8 +37,8 @@ export default createReducer(defaultState, (builder) => {
         .addCase(logoutRequest, (state) => {
             state.pending = true;
         })
-        .addCase(logoutSuccess, (state) => {
-            state = defaultState;
+        .addCase(logoutSuccess, () => {
+            return defaultState;
         })
         .addCase(clearErrors, (state) => {
             state.errors = undefined;

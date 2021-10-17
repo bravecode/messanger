@@ -1,4 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit"
+import { logoutSuccess } from "../auth/actions"
 import { searchUsersError, searchUsersRequest, searchUsersSuccess, setSearchResults } from "./actions"
 
 export interface ISearchState {
@@ -36,6 +37,9 @@ export default createReducer(defaultState, (builder) => {
             state.users = payload;
             state.errors = undefined;
             state.pending = false;
+        })
+        .addCase(logoutSuccess, () => {
+            return defaultState;
         })
         .addDefaultCase(() => {})
 })

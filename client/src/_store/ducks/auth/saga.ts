@@ -94,7 +94,7 @@ function* handleLogoutRequest(): SagaIterator {
     localStorage.removeItem('token');
 
     // & restore store to default state
-    yield put(logoutSuccess);
+    yield put(logoutSuccess());
 }
 
 // Watchers

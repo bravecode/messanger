@@ -1,6 +1,6 @@
 import { Action } from '@reduxjs/toolkit';
 import { SagaIterator } from "redux-saga";
-import { all, call, fork, put, takeLatest } from "redux-saga/effects";
+import { all, call, fork, put, takeEvery } from "redux-saga/effects";
 import { connectError, connectRequest, connectSuccess, disconnectRequest, disconnectSuccess } from "./actions";
 
 import { connect, disconnect } from '_services/socket.service';
@@ -22,16 +22,16 @@ function* handleConnectRequest(action: Action): SagaIterator {
 
 function* handleDisconnectRequest(): SagaIterator {
     yield call(disconnect);
-    yield put(disconnectSuccess)
+    yield put(disconnectSuccess())
 }
 
 // Watchers
 export function* watchConnectRequest() {
-    yield takeLatest(connectRequest, handleConnectRequest);
+    yield takeEvery(connectRequest, handleConnectRequest);
 }
 
 export function* watchDisconnectRequest() {
-    yield takeLatest(disconnectRequest, handleDisconnectRequest);
+    yield takeEvery(disconnectRequest, handleDisconnectRequest);
 }
 
 export default function* socketSaga() {

@@ -1,4 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
+import { logoutSuccess } from "../auth/actions";
 import { updateGameScore, getGameInfoError, getGameInfoRequest, getGameInfoSuccess, startGame } from "./actions";
 
 export interface IGameState {
@@ -47,6 +48,9 @@ export default createReducer(defaultState, (builder) => {
             state.newGame = false;
             state.score.you = payload.you;
             state.score.enemy = payload.foe;
+        })
+        .addCase(logoutSuccess, () => {
+            return defaultState;
         })
         .addDefaultCase(() => {})
 });
