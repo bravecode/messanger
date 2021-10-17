@@ -1,6 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { logoutSuccess } from '../auth/actions';
-import { getConversationMessagesError, getConversationMessagesRequest, getConversationMessagesSuccess } from './actions';
+import { getConversationMessagesError, getConversationMessagesRequest, getConversationMessagesSuccess, refetchConversationMessagesError, refetchConversationMessagesRequest, refetchConversationMessagesSuccess } from './actions';
 
 export interface IMessagesState {
     activeConversationID?: number;
@@ -10,6 +10,7 @@ export interface IMessagesState {
 }
 
 export interface IMessageGroup {
+    type: 'user' | 'system';
     isAuthor: boolean;
     messages: string[]
 }
@@ -32,6 +33,18 @@ export default createReducer(defaultState, (builder) => {
             state.pending = false;
         })
         .addCase(getConversationMessagesError, (state, { payload }) => {
+            state.errors = payload;
+            state.pending = false;
+        })
+        .addCase(refetchConversationMessagesRequest, (state, { payload }) => {
+            state.activeConversationID = payload;
+            state.pending = false;
+        })
+        .addCase(refetchConversationMessagesSuccess, (state, { payload }) => {
+            state.groups = payload;
+            state.pending = false;
+        })
+        .addCase(refetchConversationMessagesError, (state, { payload }) => {
             state.errors = payload;
             state.pending = false;
         })

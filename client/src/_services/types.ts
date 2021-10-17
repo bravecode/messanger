@@ -21,6 +21,7 @@ export interface TypesAuthResponse {
 export interface TypesConversationMessage {
   author: boolean;
   content: string;
+  system_message: boolean;
 }
 
 export interface TypesConversationMessageDTO {
@@ -31,6 +32,7 @@ export interface TypesConversationMessageDTO {
 export interface TypesConversationMessages {
   messages: TypesConversationMessage[];
   score: TypesGameScore;
+  your_turn: boolean;
 }
 
 export interface TypesConversationOpenDTO {

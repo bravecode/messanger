@@ -4,22 +4,35 @@ import { SagaIterator } from "redux-saga";
 import { all, call, fork, put, takeLatest } from "redux-saga/effects";
 import { getConversationMessages } from "_services/conversations.service";
 import { TypesConversationMessages, TypesErrorResponse } from "_services/types";
-import { updateGameScore } from "../game/actions";
-import { getConversationMessagesError, getConversationMessagesRequest, getConversationMessagesSuccess } from "./actions";
+import { startGame, updateGameScore } from "../game/actions";
+import { getConversationMessagesError, getConversationMessagesRequest, getConversationMessagesSuccess, refetchConversationMessagesRequest } from "./actions";
 import { IMessageGroup } from "./reducer";
 
 // Workers
 function* handleGetConversationMessagesRequest(action: Action): SagaIterator {
     try {
-        if (getConversationMessagesRequest.match(action)) {
+        if (getConversationMessagesRequest.match(action) || refetchConversationMessagesRequest.match(action)) {
             const conversationID = action.payload;
 
             const result: AxiosResponse<TypesConversationMessages> = yield call(getConversationMessages, conversationID);
 
-            const data: IMessageGroup[] = result.data.messages.reduce((prev, current, i): IMessageGroup[] => {
-                if (prev.length === 0) {
+            const data: IMessageGroup[] = result.data.messages.reduce((prev, current): IMessageGroup[] => {
+                if (current.system_message) {
                     return [
+                        ...prev,
                         {
+                            type: 'system',
+                            isAuthor: false,
+                            messages: [current.content]
+                        }
+                    ];
+                }
+                
+                if (prev.length === 0 || prev[prev.length - 1].type === 'system') {
+                    return [
+                        ...prev,
+                        {
+                            type: 'user',
                             isAuthor: current.author,
                             messages: [current.content]
                         }
@@ -44,14 +57,23 @@ function* handleGetConversationMessagesRequest(action: Action): SagaIterator {
                     ...restGroups,
                     prevGroup,
                     {
+                        type: 'user',
                         isAuthor: current.author,
                         messages: [current.content]
                     }
                 ];
             }, [] as IMessageGroup[])
 
+            // Set Messages
             yield put(getConversationMessagesSuccess(data));
+
+            // Set Game Score
             yield put(updateGameScore(result.data.score));
+
+            // Show 'Your Turn' Alert
+            if (result.data.your_turn) {
+                yield put(startGame());
+            }
         }
     } catch (err) {
         const typed: AxiosError<TypesErrorResponse> = err;
@@ -69,8 +91,13 @@ function* watchGetConversationMessagesRequest() {
     yield takeLatest(getConversationMessagesRequest, handleGetConversationMessagesRequest);
 }
 
+function* watchRefetchConversationMessagesRequest() {
+    yield takeLatest(refetchConversationMessagesRequest, handleGetConversationMessagesRequest);
+}
+
 export default function* messagesSaga() {
     yield all([
         fork(watchGetConversationMessagesRequest),
+        fork(watchRefetchConversationMessagesRequest)
     ]);
 }

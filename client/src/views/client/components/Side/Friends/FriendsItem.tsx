@@ -42,7 +42,7 @@ const FriendsItem: React.FC<IFriendsItemProps> = ({
     return (
         <div className={_containerStyles} onClick={handleConversationOpen}>
             { active && <div className="w-0.5 h-full bg-purple-500 absolute top-0 left-0" /> }
-            <div className="flex items-center justify-center h-8 w-8 rounded-full text-white bg-custom-backgorund relative">
+            <div className="flex items-center justify-center h-8 w-8 rounded-full text-white bg-custom-backgorund relative flex-shrink-0">
                 { userName[0] }
                 <FriendsItemStatus online={online} />
             </div>
@@ -51,7 +51,7 @@ const FriendsItem: React.FC<IFriendsItemProps> = ({
                     { userName }
                 </div>
                 <div className="text-xs text-custom-gray-regular leading-none pt-1">
-                    { lastMessage }
+                    { lastMessage.length >= 25 ? lastMessage.slice(0, 25) + '...' : lastMessage }
                 </div>
             </div>
         </div>

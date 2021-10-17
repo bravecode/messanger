@@ -16,7 +16,7 @@ const Message: React.FC<IMessageProps> = ({
 }) => {
     const _containerStyles = classNames({
         'p-2.5 leading-normal text-xs rounded-t-md': true,
-        'bg-custom-gray-lightest text-black ': type === 'received',
+        'bg-custom-gray-lightest text-black': type === 'received',
         'rounded-br-md': type === 'received' && last,
         'bg-purple-500 text-white ': type === 'sent',
         'rounded-bl-md': type === 'sent' && last,

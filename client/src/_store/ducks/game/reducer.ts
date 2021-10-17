@@ -1,6 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { logoutSuccess } from "../auth/actions";
-import { updateGameScore, getGameInfoError, getGameInfoRequest, getGameInfoSuccess, startGame } from "./actions";
+import { updateGameScore, startGame } from "./actions";
 
 export interface IGameState {
     score: IGameScore;
@@ -28,19 +28,6 @@ const defaultState: IGameState = {
 
 export default createReducer(defaultState, (builder) => {
     builder
-        .addCase(getGameInfoRequest, (state) => {
-            state.pending = true;
-            state.errors = undefined;
-            state.score = defaultScore;
-        })
-        .addCase(getGameInfoSuccess, (state, { payload }) => {
-            state.pending = false;
-            state.score = payload;
-        })
-        .addCase(getGameInfoError, (state, { payload }) => {
-            state.pending = false;
-            state.errors = payload;
-        })
         .addCase(startGame, (state) => {
             state.newGame = true;
         })

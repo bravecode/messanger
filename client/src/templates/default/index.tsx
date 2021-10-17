@@ -9,7 +9,7 @@ import { getProfileRequest } from '_store/ducks/auth/actions';
 import { connectRequest } from '_store/ducks/socket/actions';
 import { Spinner } from '_components/spinner/Spinner';
 import { getRelationshipsRequest, updateUserStatus } from '_store/ducks/relationship/actions';
-import { getConversationMessagesRequest } from '_store/ducks/messages/actions';
+import { refetchConversationMessagesRequest } from '_store/ducks/messages/actions';
 
 // Views
 import Client from 'views/client';
@@ -49,7 +49,7 @@ const TemplateDefault: React.FC = () => {
                 if (data.event === "CONVERSATION:MESSAGE:RECEIVED") {
                     const { relationshipID } = data;
 
-                    dispatch(getConversationMessagesRequest(relationshipID));
+                    dispatch(refetchConversationMessagesRequest(relationshipID));
                 }
 
                 if (data.event === "USER:STATUS") {
@@ -72,23 +72,20 @@ const TemplateDefault: React.FC = () => {
                 const data = JSON.parse(e.data);
 
                 if (data.event === "GAME:START") {
-                    if (data.relationshipID !== activeConversationID) {
+                    if (data.relationship_id !== activeConversationID) {
                         return;
                     }
-
-                    console.log('START');
 
                     dispatch(startGame());
                 }
 
                 if (data.event === "GAME:RESULT") {
-                    if (data.relationshipID !== activeConversationID) {
+                    if (data.relationship_id !== activeConversationID) {
                         return;
                     }
 
-                    console.log('FINISH');
-
                     dispatch(updateGameScore(data.score));
+                    dispatch(refetchConversationMessagesRequest(data.relationship_id));
                 }
             })
         }
