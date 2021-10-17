@@ -9,12 +9,14 @@ export interface ISearchResultsItemProps {
     userID: number;
     userName: string;
     requests: IRelationship[];
+    currentUserID: number;
 }
 
 const SearchResultsItem: React.FC<ISearchResultsItemProps> = ({
     userID,
     userName,
-    requests
+    requests,
+    currentUserID
 }) => {
     const dispatch = useDispatch();
 
@@ -24,7 +26,7 @@ const SearchResultsItem: React.FC<ISearchResultsItemProps> = ({
     }
 
     // Disable when user is already in relation
-    const enabled = !requests.find((user) => user.userID === userID);
+    const enabled = !requests.find((user) => user.userID === userID) && userID !== currentUserID;
 
     return (
         <div className="flex items-center gap-2.5 text-sm relative group">

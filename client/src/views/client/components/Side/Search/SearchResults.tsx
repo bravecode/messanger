@@ -9,8 +9,9 @@ import { SearchResultsItem } from './SearchResultsItem';
 const SearchResults: React.FC = () => {
     const { users } = useSelector((store: IStore) => store.search);
     const { friends, incomingRequests, outgoingRequests } = useSelector((store: IStore) => store.relationship)
+    const { user: auth } = useSelector((store: IStore) => store.auth);
 
-    if (!users.length) {
+    if (!users.length || !auth) {
         return null;
     }
 
@@ -26,7 +27,9 @@ const SearchResults: React.FC = () => {
             {
                 users.map((user) =>
                     <SearchResultsItem
+                        key={user.ID}
                         userID={user.ID}
+                        currentUserID={auth.ID}
                         userName={user.username}
                         requests={requests}
                     />   
